@@ -1,0 +1,48 @@
+﻿<Controls:MetroWindow x:Class="GithubActors_WPF.LauncherForm"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+                      Height="150"
+                      Width="400"
+                      Title="Who Starred This Repo?"
+                      ShowMaxRestoreButton="False"
+                      ShowMinButton="False"
+                      GlowBrush="{DynamicResource AccentColorBrush}"
+                      Closing="Window_Closing">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0"
+               Grid.Column="0"
+               Content="Repo URL"
+               Margin="5"></Label>
+        <TextBox Grid.Row="0"
+                 Grid.Column="1"
+                 Grid.ColumnSpan="2"
+                 Controls:TextBoxHelper.ClearTextButton="True"
+                 Text="{Binding Path=RepoUrl, Mode=TwoWay}"
+                 Margin="5"></TextBox>
+
+        <Button Grid.Row="1"
+                Grid.Column="1"                
+                Content=" GO "
+                Margin="5"
+                Style="{StaticResource AccentedSquareButtonStyle}"
+                Command="{Binding LaunchSearch}" />
+
+        <StatusBar Grid.Row="3"
+                   Grid.Column="0"
+                   Grid.ColumnSpan="3">
+            <StatusBarItem Content="{Binding Path=Status}"></StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Controls:MetroWindow>
