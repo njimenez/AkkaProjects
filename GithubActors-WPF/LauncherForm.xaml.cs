@@ -36,7 +36,6 @@ namespace GithubActors_WPF
         private string m_RepoUrl = "";
         private string m_Status = String.Empty;
         private Color m_StatusForeColor = new Color();
-        private bool m_StatusVisible = false;
 
         public LauncherFormViewModel()
         {
@@ -76,14 +75,6 @@ namespace GithubActors_WPF
                 this.RaiseAndSetIfChanged( ref m_Status, value );
             }
         }
-        public bool StatusVisible
-        {
-            get { return m_StatusVisible; }
-            set
-            {
-                this.RaiseAndSetIfChanged( ref m_StatusVisible, value );
-            }
-        }
         public Color StatusForeColor
         {
             get
@@ -114,7 +105,6 @@ namespace GithubActors_WPF
 
         public void SetStatus( Color foreColor, string message )
         {
-            StatusVisible = true;
             Status = message;
             StatusForeColor = foreColor;
         }

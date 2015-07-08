@@ -100,13 +100,11 @@ namespace GithubActors_WPF
 
     public class RepoResultsViewModel : ReactiveObject
     {
-        private Color m_color;
         private int progressMax = 0;
         private int progressValue = 0;
         private string status = String.Empty;
         private string title = String.Empty;
         private IActorRef _formActor;
-        public ReactiveList<RepoViewModel> Items { get; set; }
 
         public RepoResultsViewModel( IActorRef githubCoordinator, Messages.RepoKey repo )
         {
@@ -129,6 +127,10 @@ namespace GithubActors_WPF
             // kill the form actor
             _formActor.Tell( PoisonPill.Instance );
         }
+
+
+        public ReactiveList<RepoViewModel> Items { get; set; }
+
         public string Title
         {
             get { return title; }
@@ -159,14 +161,6 @@ namespace GithubActors_WPF
             set
             {
                 this.RaiseAndSetIfChanged( ref progressMax, value );
-            }
-        }
-        public Color Background
-        {
-            get { return m_color; }
-            set
-            {
-                this.RaiseAndSetIfChanged( ref m_color, value );
             }
         }
     }

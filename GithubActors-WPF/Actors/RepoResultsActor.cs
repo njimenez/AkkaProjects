@@ -63,8 +63,6 @@ namespace GithubActors_WPF.Actors
             {
                 vm.Status = string.Format( "Failed to gather data for Github repository {0} / {1}",
                     failed.Repo.Owner, failed.Repo.Repo );
-
-                vm.Background = Colors.Red;
             } );
         }
     }

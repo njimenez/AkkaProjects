@@ -35,7 +35,6 @@ namespace GithubActors_WPF
         private Color m_StatusLabelForeColor;
         private string m_Status;
         private string m_OAuthToken;
-        private bool m_StatusLabelVisible = false;
         private IActorRef m_vmActor;
         private readonly ContentControl m_View;
 
@@ -73,14 +72,6 @@ namespace GithubActors_WPF
             set
             {
                 this.RaiseAndSetIfChanged( ref m_Status, value );
-            }
-        }
-        public bool StatusLabelVisible
-        {
-            get { return m_StatusLabelVisible; }
-            set
-            {
-                this.RaiseAndSetIfChanged( ref m_StatusLabelVisible, value );
             }
         }
         public Color StatusLabelForeColor

@@ -22,11 +22,5 @@ namespace GithubActors_WPF
             base.OnStartup( e );
             GithubSystem = ActorSystem.Create( "github-system" );
         }
-
-
-        /*
-         * 
-         *     
-         */
     }
 }

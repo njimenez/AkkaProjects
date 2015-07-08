@@ -64,7 +64,6 @@ namespace GithubActors_WPF.Actors
 
         private void BecomeAuthenticating()
         {
-            m_vm.StatusLabelVisible = true;
             m_vm.StatusLabelForeColor = Colors.Yellow;
             m_vm.Status = "Authenticating...";
             Become( Authenticating );
