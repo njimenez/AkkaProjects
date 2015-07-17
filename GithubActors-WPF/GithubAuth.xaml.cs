@@ -8,8 +8,6 @@ using Akka.Actor;
 using GithubActors_WPF.Actors;
 using System.Windows.Media;
 using System.Windows.Controls;
-using System.Reactive.Subjects;
-using System.Reactive.Linq;
 using MahApps.Metro.Controls;
 
 namespace GithubActors_WPF

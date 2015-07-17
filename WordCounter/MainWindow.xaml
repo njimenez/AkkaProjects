@@ -6,7 +6,7 @@
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       mc:Ignorable="d"
-                      d:DataContext="{d:DesignInstance Type=local:MainWindowViewModel, IsDesignTimeCreatable=True}"
+                      d:DataContext="{d:DesignInstance Type=local:MockMainWindowViewModel, IsDesignTimeCreatable=True}"
                       Title="Akka Word Counter"
                       Height="350"
                       Width="525"
@@ -71,8 +71,12 @@
 
         <Button  Grid.Row="0"
                  Grid.Column="1"
-                 Content="Button"
-                 Margin="5"></Button>
+                 Margin="5"
+                 Content="count"
+                 Style="{StaticResource AccentedSquareButtonStyle}"
+                 Command="{Binding Count}">
+            
+        </Button>
 
 
     </Grid>

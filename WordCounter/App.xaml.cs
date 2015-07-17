@@ -1,9 +1,7 @@
-﻿using System;
+﻿using Akka.Actor;
+using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace WordCounter
@@ -12,6 +10,16 @@ namespace WordCounter
     /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application
-    {
+    {  /// <summary>
+        /// ActorSystem we'll be using to collect and process data
+        /// from Github using their official .NET SDK, Octokit
+        /// </summary>
+        public static ActorSystem WordCounterSystem;
+
+        protected override void OnStartup( StartupEventArgs e )
+        {
+            base.OnStartup( e );
+            WordCounterSystem = ActorSystem.Create( "word-counter" );
+        }
     }
 }

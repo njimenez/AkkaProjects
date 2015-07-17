@@ -24,8 +24,7 @@ namespace WordCounter
         public MainWindow()
         {
             InitializeComponent();
-            var vm = new MainWindowViewModel();
-            DataContext = vm;
+            DataContext = new MainWindowViewModel();
         }
     }
 }
