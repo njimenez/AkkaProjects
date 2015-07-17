@@ -17,7 +17,7 @@ namespace WordCounter.Actors
         private Stopwatch m_sw;
         private int result = 0;
 
-        public static Props Config()
+        public static Props GetProps()
         {
             return Props.Create<WordCounterActor>();
         }
@@ -68,11 +68,9 @@ namespace WordCounter.Actors
         {
             result += message.WordsInLine;
             linesProcessed++;
-            // Console.Write( "." );
             // make sure that all lines have been visited.
             if ( linesProcessed == lineno )
             {
-                Console.Write( "?" );
                 m_sw.Stop();
                 Context.Parent.Tell( new WordsInFileMessage( fileName, result, m_sw.ElapsedMilliseconds ) );
             }

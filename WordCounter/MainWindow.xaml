@@ -24,6 +24,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
 
@@ -62,6 +63,10 @@
                                            Margin="2"></TextBlock>
                                 <TextBlock Text="words"
                                            Margin="2"></TextBlock>
+                                <TextBlock Text="{Binding Path=ElapsedMs}"
+                                           Margin="2"></TextBlock>
+                                <TextBlock Text="ms"
+                                           Margin="2"></TextBlock>
                             </StackPanel>
                         </StackPanel>
                     </Border>
@@ -78,6 +83,11 @@
             
         </Button>
 
+        <StatusBar Grid.Row="3"
+                   Grid.Column="0"
+                   Grid.ColumnSpan="3">
+            <StatusBarItem Content="{Binding Path=Status}"></StatusBarItem>
+        </StatusBar>
 
     </Grid>
 </Controls:MetroWindow>

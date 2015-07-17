@@ -24,13 +24,15 @@ namespace WordCounter
     {
         private string m_Extension = String.Empty;
         private string m_Folders = String.Empty;
+        private string m_Status = String.Empty;
         private IActorRef m_vmActor;
         
 
         public MainWindowViewModel()
         {
             Extension = "*.txt";
-            Folders = @"C:\Users\njimenez\Documents\Projects\BondFire\BondFire.Net\";
+            //Folders = @"C:\Users\njimenez\Documents\Projects\BondFire\BondFire.Net\";
+            Folders = @"D:\Projects\HelixProjects\GovBond\GovBond\Production";
             Items = new Results();
 
             Count = ReactiveCommand.Create( null );
@@ -62,6 +64,14 @@ namespace WordCounter
                 this.RaiseAndSetIfChanged( ref m_Extension, value );
             }
         }
+        public string Status
+        {
+            get { return m_Status; }
+            set
+            {
+                this.RaiseAndSetIfChanged( ref m_Status, value );
+            }
+        }
         public Subject<ResultItem> AddItem { get; set; }
         public ReactiveCommand<object> Count { get; private set; }
 
@@ -79,26 +89,26 @@ namespace WordCounter
         public MockMainWindowViewModel()
         {
             Items = new Results();
-            Items.Add( new ResultItem() { FilePath = @"c:\temp\file1.txt", TotalWords = 50 } );
-            Items.Add( new ResultItem() { FilePath = @"c:\temp\file2.txt", TotalWords = 150 } );
-            Items.Add( new ResultItem() { FilePath = @"c:\temp\file3.txt", TotalWords = 1250 } );
-            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350 } );
-            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350 } );
-            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350 } );
-            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350 } );
-            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350 } );
-            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350 } );
-            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350 } );
-            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350 } );
-            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350 } );
-            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350 } );
-            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350 } );
-            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350 } );
-            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350 } );
-            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350 } );
-            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350 } );
-            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350 } );
-            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350 } );
+            Items.Add( new ResultItem() { FilePath = @"c:\temp\file1.txt", TotalWords = 50 , ElapsedMs=1000} );
+            Items.Add( new ResultItem() { FilePath = @"c:\temp\file2.txt", TotalWords = 150, ElapsedMs = 1000 } );
+            Items.Add( new ResultItem() { FilePath = @"c:\temp\file3.txt", TotalWords = 1250, ElapsedMs = 1000 } );
+            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350, ElapsedMs = 1000 } );
+            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350, ElapsedMs = 1000 } );
+            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350, ElapsedMs = 1000 } );
+            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350, ElapsedMs = 1000 } );
+            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350, ElapsedMs = 1000 } );
+            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350, ElapsedMs = 1000 } );
+            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350, ElapsedMs = 1000 } );
+            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350, ElapsedMs = 1000 } );
+            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350, ElapsedMs = 1000 } );
+            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350, ElapsedMs = 1000 } );
+            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350, ElapsedMs = 1000 } );
+            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350, ElapsedMs = 1000 } );
+            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350, ElapsedMs = 1000 } );
+            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350, ElapsedMs = 1000 } );
+            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350, ElapsedMs = 1000 } );
+            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350, ElapsedMs = 1000 } );
+            Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350, ElapsedMs = 1000 } );
         }
     }
 }

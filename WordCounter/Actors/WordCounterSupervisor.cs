@@ -27,72 +27,36 @@ namespace WordCounter.Actors
 
         private void ValidatingInput()
         {
+            // receive from parent
             Receive<StartSearch>( msg => DoValidate( msg ) );
-            Receive<InvalidArgs>( msg => DoInvalidArgs( msg ) );
+
+            // receive from validator
             Receive<ValidArgs>( msg => DoCrawl( msg ) );
+
+            // receive from crawler
+            Receive<WordsInFileMessage>( msg => DoDisplay( msg ) );
+
+            // receive from children
+            Receive<StatusMessage>( msg => DoStatus( msg ) );
         }
 
         private void DoValidate( StartSearch msg )
         {
             validator.Tell( new ValidateArgs( msg.Folders, msg.Extension ) );
         }
-        private void DoInvalidArgs( InvalidArgs msg )
-        {
-            m_vm.AddItem.OnNext( new ResultItem() { FilePath = msg.ErrorMessage } );
-        }
         private void DoCrawl( ValidArgs msg )
         {
-            throw new NotImplementedException();
+            // TODO : if we click the button again we get exception
+            var crawler = Context.ActorOf<DirectoryCrawler>( "directoryCrawler" );
+            crawler.Tell( new DirectoryToSearchMessage( msg.Fullpath ) );
         }
-    }
-
-    public class FileValidatorActor : ReceiveActor
-    {
-        public static Props GetProps()
+        private void DoDisplay( WordsInFileMessage msg )
         {
-            return Props.Create( () => new FileValidatorActor() );
+            m_vm.AddItem.OnNext( new ResultItem() { FilePath = msg.FileName, TotalWords = msg.WordsInFile, ElapsedMs = msg.ElapsedMilliseconds } );
         }
-        public FileValidatorActor()
+        private void DoStatus( StatusMessage msg )
         {
-            Receive<ValidateArgs>( msg => DoValidate( msg ) );
-        }
-        private void DoValidate( ValidateArgs msg )
-        {
-            if ( String.IsNullOrEmpty( msg.Folders ) )
-            {
-                Sender.Tell( new InvalidArgs( "Folders argument is empty." ) );
-            }
-
-            var fullPath = IsFileUri( Path.Combine( msg.Folders, msg.Extension ) );
-            if ( String.IsNullOrEmpty( fullPath ) )
-            {
-                Sender.Tell( new InvalidArgs( String.Format( "Invalid Folder [{0}] [{1}]", msg.Folders, msg.Extension ) ) );
-            }
-            else
-            {
-                Sender.Tell( new ValidArgs( fullPath ) );
-            }
-        }
-        /// <summary>
-        /// Checks if file exists at path provided by user.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        private static String IsFileUri( string path )
-        {
-            var directory = String.Empty;
-            var searchPattern = String.Empty;
-            if ( Directory.Exists( path ) )
-            {
-                searchPattern = Path.GetExtension( path );
-                if ( String.IsNullOrWhiteSpace( searchPattern ) )
-                {
-                    searchPattern = "*.txt";
-                }
-                directory = Path.GetDirectoryName( Path.Combine( path, searchPattern ) );
-            }
-
-            return directory;
+            m_vm.Status = msg.Message;
         }
     }
 }

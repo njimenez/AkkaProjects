@@ -1,6 +1,7 @@
 ﻿using Akka.Actor;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace WordCounter.Messages
@@ -39,12 +40,13 @@ namespace WordCounter.Messages
     }
     public class ValidArgs
     {
-        public ValidArgs(String path)
+        public ValidArgs( String fullpath )
         {
-            Path = path;
+            Fullpath = fullpath;
         }
-        public String Path { get; private set; }
+        public String Fullpath { get; private set; }
     }
+
     public class LineToProcessMessage
     {
         public LineToProcessMessage( string line )
@@ -58,13 +60,13 @@ namespace WordCounter.Messages
     }
     public class DirectoryToSearchMessage
     {
-        public DirectoryToSearchMessage( string path, string searchPattern )
+        public DirectoryToSearchMessage( string fullpath )
         {
-            SearchPattern = searchPattern;
-            Path = path;
+            SearchPattern = "*" + Path.GetExtension( fullpath );
+            DirectoryPath = string.Format( @"{0}\", Path.GetDirectoryName( fullpath ) );
         }
 
-        public string Path { get; private set; }
+        public string DirectoryPath { get; private set; }
         public string SearchPattern { get; private set; }
     }
     public class FileToProcessMessage
@@ -108,5 +110,15 @@ namespace WordCounter.Messages
         public int WordsInFile { get; private set; }
         public string FileName { get; private set; }
         public long ElapsedMilliseconds { get; private set; }
+    }
+
+    public class StatusMessage
+    {
+        
+        public StatusMessage(String message)
+        {
+            Message = message;            
+        }
+        public String Message { get; private set; }
     }
 }

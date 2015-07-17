@@ -13,5 +13,7 @@ namespace WordCounter
 
         public string FilePath { get; set; }
         public int TotalWords { get; set; }
+        public long ElapsedMs { get; set; }
+
     }
 }

@@ -30,18 +30,24 @@ namespace WordCounter.Actors
 
             m_sw.Start();
 
-            foreach ( var file in Directory.EnumerateFiles( message.Path, message.SearchPattern, SearchOption.AllDirectories ) )
+            foreach ( var file in Directory.EnumerateFiles( message.DirectoryPath, message.SearchPattern, SearchOption.AllDirectories ) )
             {
-                var counterActor = Context.ActorOf( WordCounterActor.Config() );
+                var counterActor = Context.ActorOf( WordCounterActor.GetProps() );
                 counterActor.Tell( new FileToProcessMessage( file, fileno ) );
                 fileno++;
                 filedProcessed.Add( file, false );
+                Context.Parent.Tell( new StatusMessage( "Processing file " + file ) );
             }
+
+            Context.Parent.Tell( new StatusMessage( string.Format( "Processed {0} file(s)", fileno ) ) );
         }
 
         public void Handle( WordsInFileMessage message )
         {
             fileProcessed++;
+
+
+            Context.Parent.Tell( message );
 
             //writer.Tell( "-----------------------------------------------------------------------------------------------" );
             //writer.Tell( String.Format( "{0} ", message.FileName ) );
@@ -51,7 +57,7 @@ namespace WordCounter.Actors
             if ( fileProcessed == fileno )
             {
                 m_sw.Stop();
-//                writer.Tell( String.Format( "Done....{0:N}", m_sw.ElapsedMilliseconds ) );
+                //                writer.Tell( String.Format( "Done....{0:N}", m_sw.ElapsedMilliseconds ) );
                 // Self.GracefulStop(new TimeSpan(0,0,5));
             }
         }

@@ -100,6 +100,7 @@
     <Compile Include="Actors\ActorMetaData.cs" />
     <Compile Include="Actors\ActorPaths.cs" />
     <Compile Include="Actors\DirectoryCrawler.cs" />
+    <Compile Include="Actors\FileValidatorActor.cs" />
     <Compile Include="Actors\StringCounterActor.cs" />
     <Compile Include="Actors\WordCounterActor.cs" />
     <Compile Include="Actors\WordCounterSupervisor.cs" />
