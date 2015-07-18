@@ -1,8 +1,6 @@
 using Akka.Actor;
-using Akka.Routing;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using WordCounter.Messages;
@@ -52,7 +50,14 @@ namespace WordCounter.Actors
         }
         private void DoDisplay( WordsInFileMessage msg )
         {
-            m_vm.AddItem.OnNext( new ResultItem() { FilePath = msg.FileName, TotalWords = msg.WordsInFile, ElapsedMs = msg.ElapsedMilliseconds } );
+            m_vm.AddItem.OnNext( new ResultItem()
+            {
+                FilePath = msg.FileName,
+                DirectoryPath = Path.GetDirectoryName( msg.FileName ),
+                FileName = Path.GetFileName( msg.FileName ),
+                TotalWords = msg.WordsInFile,
+                ElapsedMs = msg.ElapsedMilliseconds
+            } );
         }
         private void DoStatus( StatusMessage msg )
         {

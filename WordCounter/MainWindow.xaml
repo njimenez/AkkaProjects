@@ -45,35 +45,11 @@
                  Margin="5"
                  Text="{Binding Path=Extension, Mode=TwoWay}"></TextBox>
 
-        <ListBox Grid.ColumnSpan="2"
-                 Grid.Row="2"
-                 Grid.Column="0"
-                 Margin="5"
-                 ItemsSource="{Binding Items}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Border CornerRadius="10"
-                            BorderBrush="Black"
-                            BorderThickness="1"
-                            Margin="1">
-                        <StackPanel Margin="5">
-                            <TextBlock Text="{Binding Path=FilePath}"></TextBlock>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding Path=TotalWords}"
-                                           Margin="2"></TextBlock>
-                                <TextBlock Text="words"
-                                           Margin="2"></TextBlock>
-                                <TextBlock Text="{Binding Path=ElapsedMs}"
-                                           Margin="2"></TextBlock>
-                                <TextBlock Text="ms"
-                                           Margin="2"></TextBlock>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-
+        <!-- http://wpftutorial.net/DataGrid.html -->
+        <DataGrid Grid.ColumnSpan="2" Grid.Row="2" Grid.Column="0" Margin="5" ItemsSource="{Binding Items}">
+            
+        </DataGrid>
+        
         <Button  Grid.Row="0"
                  Grid.Column="1"
                  Margin="5"
