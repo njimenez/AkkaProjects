@@ -32,13 +32,36 @@ namespace WordCounter.Actors
             fileProcessed = 0;
 
             m_sw.Start();
-            foreach ( var file in Directory.EnumerateFiles( message.DirectoryPath, message.SearchPattern, SearchOption.AllDirectories ) )
+            EnumerateFiles( message.DirectoryPath, message.SearchPattern );
+        }
+
+        private void EnumerateDirectories( string staringdir, String searchPattern )
+        {
+            foreach ( var dir in Directory.GetDirectories( staringdir, "*.*", SearchOption.TopDirectoryOnly ) )
             {
-                var counterActor = Context.ActorOf( WordCounterActor.GetProps() );
-                counterActor.Tell( new FileToProcessMessage( file, fileno ) );
-                fileno++;
-                filesProcessed.Add( file, false );
-                Context.Parent.Tell( new StatusMessage( "Processing file " + file ) );
+                EnumerateFiles( dir, searchPattern );
+            }
+        }
+
+        private void EnumerateFiles( string directory, String searchPattern )
+        {
+            try
+            {
+                foreach ( var file in Directory.GetFiles( directory, searchPattern, SearchOption.TopDirectoryOnly ) )
+                {
+                    var counterActor = Context.ActorOf( WordCounterActor.GetProps() );
+                    counterActor.Tell( new FileToProcessMessage( file, fileno ) );
+                    fileno++;
+                    filesProcessed.Add( file, false );
+                    Context.Parent.Tell( new StatusMessage( "Processing file " + file ) );
+                }
+
+                EnumerateDirectories( directory, searchPattern );
+
+            }
+            catch ( Exception )
+            {
+                Console.WriteLine( "Error getting file" );
             }
         }
 

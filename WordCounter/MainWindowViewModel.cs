@@ -81,58 +81,8 @@ namespace WordCounter
             m_vmActor.Tell( new StartSearch(Folders, Extension)  );
         }
     }
-
-    public class TabItemViewModel : ReactiveObject
-    {
-        private string m_Extension = String.Empty;
-        private string m_Folders = String.Empty;
-        private string m_Status = String.Empty;
-                       
-        public string Folders
-        {
-            get { return m_Folders; }
-            set
-            {
-                this.RaiseAndSetIfChanged( ref m_Folders, value );
-            }
-        }
-        public string Extension
-        {
-            get { return m_Extension; }
-            set
-            {
-                this.RaiseAndSetIfChanged( ref m_Extension, value );
-            }
-        }
-        public string Status
-        {
-            get { return m_Status; }
-            set
-            {
-                this.RaiseAndSetIfChanged( ref m_Status, value );
-            }
-        }
-
-        public Results Items { get; set; }
-        public Subject<ResultItem> AddItem { get; set; }
-
-        /// <summary>
-        /// Initializes a new instance of the TabItemViewModel class.
-        /// </summary>
-        public TabItemViewModel()
-        {
-            Items = new Results();
-            AddItem = new Subject<ResultItem>();
-        }
-
-
-        //private void DoCount()
-        //{
-        //    m_vmActor.Tell( new StartSearch( Folders, Extension ) );
-        //}
-
-    }
-
+    
+    
     public class MockMainWindowViewModel : MainWindowViewModel
     {
         /// <summary>

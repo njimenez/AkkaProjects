@@ -50,13 +50,19 @@ namespace WordCounter.Actors
             var router = Context.ActorOf( new RoundRobinPool( 8 )
                                             .Props( StringCounterActor.Config() ),
                                             String.Format( "liner{0}", message.Fileno ) );
-
-            foreach ( var line in FileLines( fileName ) )
+            try
             {
-                // var counterActor = Context.ActorOf<StringCounterActor>();
-                // counterActor.Tell( new LineToProcessMessage( line ) );
-                router.Tell( new LineToProcessMessage( line ) );
-                lineno++;
+                foreach ( var line in File.ReadLines( fileName ) )
+                {
+                    // var counterActor = Context.ActorOf<StringCounterActor>();
+                    // counterActor.Tell( new LineToProcessMessage( line ) );
+                    router.Tell( new LineToProcessMessage( line ) );
+                    lineno++;
+                }
+            }
+            catch ( Exception ex )
+            {
+
             }
 
             // handle when file is empty
@@ -96,18 +102,18 @@ namespace WordCounter.Actors
             Context.Parent.Tell( new FailureMessage( reason, Self ) );
         }
 
-        private IEnumerable<string> FileLines( string filename )
-        {
-            using ( var sr = File.OpenText( filename ) )
-            {
-                while ( true )
-                {
-                    string line = sr.ReadLine();
-                    if ( line == null )
-                        yield break;
-                    yield return line;
-                }
-            }
-        }
+        //private IEnumerable<string> FileLines( string filename )
+        //{
+        //    using ( var sr = File.OpenText( filename ) )
+        //    {
+        //        while ( true )
+        //        {
+        //            string line = sr.ReadLine();
+        //            if ( line == null )
+        //                yield break;
+        //            yield return line;
+        //        }
+        //    }
+        //}
     }
 }
