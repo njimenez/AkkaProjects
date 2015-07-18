@@ -26,18 +26,18 @@ namespace WordCounter
         private string m_Folders = String.Empty;
         private string m_Status = String.Empty;
         private IActorRef m_vmActor;
-        
+
 
         public MainWindowViewModel()
         {
             Extension = "*.txt";
-            //Folders = @"C:\Users\njimenez\Documents\Projects\BondFire\BondFire.Net\";
-            Folders = @"D:\Projects\HelixProjects\GovBond\GovBond\Production";
+            Folders = @"C:\Users\njimenez\Documents\Projects\BondFire\BondFire.Net\";
+            //Folders = @"D:\Projects\HelixProjects\GovBond\GovBond\Production";
             Items = new Results();
 
-            Count = ReactiveCommand.Create( null );
-            Count.Subscribe( x => DoCount() );
-
+            CountCommand = ReactiveCommand.Create(  );
+            CountCommand.Subscribe( x => DoCount() );
+            
             // this is how we can update the viewmodel 
             // from the actor. 
             AddItem = new Subject<ResultItem>();
@@ -73,11 +73,12 @@ namespace WordCounter
             }
         }
         public Subject<ResultItem> AddItem { get; set; }
-        public ReactiveCommand<object> Count { get; private set; }
+        public ReactiveCommand<object> CountCommand { get; private set; }
 
         private void DoCount()
         {
-            m_vmActor.Tell( new StartSearch(Folders, Extension)  );
+            Items.Clear();
+            m_vmActor.Tell( new StartSearch( Folders, Extension ) );
         }
     }
 
@@ -89,7 +90,7 @@ namespace WordCounter
         public MockMainWindowViewModel()
         {
             Items = new Results();
-            Items.Add( new ResultItem() { FilePath = @"c:\temp\file1.txt", TotalWords = 50 , ElapsedMs=1000} );
+            Items.Add( new ResultItem() { FilePath = @"c:\temp\file1.txt", TotalWords = 50, ElapsedMs = 1000 } );
             Items.Add( new ResultItem() { FilePath = @"c:\temp\file2.txt", TotalWords = 150, ElapsedMs = 1000 } );
             Items.Add( new ResultItem() { FilePath = @"c:\temp\file3.txt", TotalWords = 1250, ElapsedMs = 1000 } );
             Items.Add( new ResultItem() { FilePath = @"c:\temp\file4.txt", TotalWords = 12350, ElapsedMs = 1000 } );

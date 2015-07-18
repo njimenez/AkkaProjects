@@ -30,7 +30,6 @@ namespace WordCounter.Actors
             //m_Sender = sender;
             fileName = String.Empty;
             m_sw = new Stopwatch();
-
             Ready();
         }
 
@@ -43,6 +42,9 @@ namespace WordCounter.Actors
         }
         public void Handle( FileToProcessMessage message )
         {
+            lineno = 0;
+            linesProcessed = 0;
+            result = 0;
             m_sw.Start();
             fileName = message.FileName;
             var router = Context.ActorOf( new RoundRobinPool( 8 )
@@ -73,6 +75,7 @@ namespace WordCounter.Actors
             {
                 m_sw.Stop();
                 Context.Parent.Tell( new WordsInFileMessage( fileName, result, m_sw.ElapsedMilliseconds ) );
+                Context.Stop( Self );
             }
         }
 
