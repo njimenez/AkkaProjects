@@ -31,12 +31,12 @@ namespace WordCounter
         public MainWindowViewModel()
         {
             Extension = "*.txt";
-            //Folders = @"C:\Users\njimenez\Documents\Projects\BondFire\BondFire.Net\";
-            Folders = @"D:\Projects\HelixProjects\GovBond\GovBond\Production";
+            Folders = @"C:\Users\njimenez\Documents\Projects\BondFire\BondFire.Net\";
+            //Folders = @"D:\Projects\HelixProjects\GovBond\GovBond\Production";
             Items = new Results();
 
-            Count = ReactiveCommand.Create( null );
-            Count.Subscribe( x => DoCount() );
+            CountCommand = ReactiveCommand.Create(  );
+            CountCommand.Subscribe( x => DoCount() );
 
             // this is how we can update the viewmodel 
             // from the actor. 
@@ -73,15 +73,11 @@ namespace WordCounter
             }
         }
         public Subject<ResultItem> AddItem { get; set; }
-        public ReactiveCommand<object> Count { get; private set; }
+        public ReactiveCommand<object> CountCommand { get; private set; }
 
         private void DoCount()
         {
-            // here we create a new tab item and viewmodel and let the actor system take care of the rest
-            //var tab = new TabItem();
-            //tab.Header = "header";
-            //tab.Name = "somename";
-
+            Items.Clear();
             m_vmActor.Tell( new StartSearch(Folders, Extension)  );
         }
     }

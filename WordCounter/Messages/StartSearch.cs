@@ -121,4 +121,5 @@ namespace WordCounter.Messages
         }
         public String Message { get; private set; }
     }
+    public class Done { }
 }

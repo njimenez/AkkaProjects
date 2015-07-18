@@ -9,6 +9,7 @@ namespace WordCounter.Actors
 {
     public class WordCounterSupervisor : ReceiveActor
     {
+        private IActorRef crawler;
         private IActorRef validator;
 
         /// <summary>
@@ -19,7 +20,7 @@ namespace WordCounter.Actors
         {
             m_vm = vm;
             validator = Context.ActorOf( FileValidatorActor.GetProps(), ActorPaths.FileValidator.Name );
-
+            crawler = Context.ActorOf<DirectoryCrawler>( "directoryCrawler" );
             ValidatingInput();
         }
 
@@ -36,6 +37,7 @@ namespace WordCounter.Actors
 
             // receive from children
             Receive<StatusMessage>( msg => DoStatus( msg ) );
+            Receive<Done>( msg => Handle( msg ) );
         }
 
         private void DoValidate( StartSearch msg )
@@ -43,9 +45,7 @@ namespace WordCounter.Actors
             validator.Tell( new ValidateArgs( msg.Folders, msg.Extension ) );
         }
         private void DoCrawl( ValidArgs msg )
-        {
-            // TODO : if we click the button again we get exception
-            var crawler = Context.ActorOf<DirectoryCrawler>( "directoryCrawler" );
+        {          
             crawler.Tell( new DirectoryToSearchMessage( msg.Fullpath ) );
         }
         private void DoDisplay( WordsInFileMessage msg )
@@ -62,6 +62,10 @@ namespace WordCounter.Actors
         private void DoStatus( StatusMessage msg )
         {
             m_vm.Status = msg.Message;
+        }
+        private void Handle( Done msg )
+        {
+           // m_vm.EnableButton( true );
         }
     }
 }

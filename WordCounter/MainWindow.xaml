@@ -55,7 +55,7 @@
                  Margin="5"
                  Content="count"
                  Style="{StaticResource AccentedSquareButtonStyle}"
-                 Command="{Binding Count}">
+                 Command="{Binding CountCommand}">
             
         </Button>
 
