@@ -4,16 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2FF2BE68-D2CF-4F0B-837B-2C68E4DA7BA2}</ProjectGuid>
+    <ProjectGuid>{2ACA7C23-8CF1-47D0-9074-81D53BAD97E4}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GithubActors_WPF</RootNamespace>
-    <AssemblyName>GithubActors-WPF</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <RootNamespace>WordCounter</RootNamespace>
+    <AssemblyName>WordCounter</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -47,10 +46,6 @@
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Octokit, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Octokit.0.7.2\lib\net45\Octokit.dll</HintPath>
-    </Reference>
     <Reference Include="ReactiveUI, Version=6.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\reactiveui-core.6.5.0\lib\Net45\ReactiveUI.dll</HintPath>
       <Private>True</Private>
@@ -61,7 +56,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Reactive.Core, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Rx-Core.2.2.5\lib\net45\System.Reactive.Core.dll</HintPath>
       <Private>True</Private>
@@ -103,45 +97,30 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ActorPaths.cs" />
-    <Compile Include="Actors\GithubAuthenticationActor.cs" />
-    <Compile Include="Actors\GithubCommanderActor.cs" />
-    <Compile Include="Actors\GithubCoordinatorActor.cs" />
-    <Compile Include="Actors\GithubValidatorActor.cs" />
-    <Compile Include="Actors\GithubWorkerActor.cs" />
-    <Compile Include="Actors\MainFormActor.cs" />
-    <Compile Include="Actors\Messages.cs" />
-    <Compile Include="Actors\RepoResultsActor.cs" />
-    <Compile Include="Extensions\ColorToBrushConverter.cs" />
-    <Compile Include="Factories\GithubProgressStats.cs" />
-    <Compile Include="Factories\GithubClientFactory.cs" />
-    <Compile Include="RepoResultsForm.xaml.cs">
-      <DependentUpon>RepoResultsForm.xaml</DependentUpon>
-    </Compile>
-    <Page Include="GithubAuth.xaml">
-      <SubType>Designer</SubType>
+    <Compile Include="Actors\ActorMetaData.cs" />
+    <Compile Include="Actors\ActorPaths.cs" />
+    <Compile Include="Actors\DirectoryCrawler.cs" />
+    <Compile Include="Actors\FileValidatorActor.cs" />
+    <Compile Include="Actors\StringCounterActor.cs" />
+    <Compile Include="Actors\WordCounterActor.cs" />
+    <Compile Include="Actors\WordCounterSupervisor.cs" />
+    <Compile Include="Messages\StartSearch.cs" />
+    <Compile Include="ResultItem.cs" />
+    <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="LauncherForm.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GithubAuth.xaml.cs">
-      <DependentUpon>GithubAuth.xaml</DependentUpon>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </Compile>
-    <Compile Include="LauncherForm.xaml.cs">
-      <DependentUpon>LauncherForm.xaml</DependentUpon>
-    </Compile>
-    <Page Include="RepoResultsForm.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MainWindowViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -168,9 +147,7 @@
     <None Include="readme.md" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

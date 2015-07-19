@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GithubActors", "GitHubActor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GithubActors-WPF", "GithubActors-WPF\GithubActors-WPF.csproj", "{2FF2BE68-D2CF-4F0B-837B-2C68E4DA7BA2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordCounter", "WordCounter\WordCounter.csproj", "{2ACA7C23-8CF1-47D0-9074-81D53BAD97E4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{2FF2BE68-D2CF-4F0B-837B-2C68E4DA7BA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FF2BE68-D2CF-4F0B-837B-2C68E4DA7BA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FF2BE68-D2CF-4F0B-837B-2C68E4DA7BA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2ACA7C23-8CF1-47D0-9074-81D53BAD97E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2ACA7C23-8CF1-47D0-9074-81D53BAD97E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2ACA7C23-8CF1-47D0-9074-81D53BAD97E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2ACA7C23-8CF1-47D0-9074-81D53BAD97E4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

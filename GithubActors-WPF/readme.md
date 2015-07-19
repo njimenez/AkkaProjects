@@ -18,6 +18,7 @@ Created a `ReactiveObject` ViewModel to bind with the form.
 The ViewModel called `GithubAuthViewModel` takes the form as a parameter so that we can hide it after being authorized.
 
 Setup some properties to bind the form with:
+
 1. `OAuthToken` property that binds to the textbox where we input the Github Token.
 2. `Status` property that binds to the StatusBar on the form.    
 3. `StatusLabelForeColor` property that binds to the color of the status message.
@@ -40,6 +41,7 @@ The only changes to `GithubAuthenticationActor` are the injection of the ViewMod
 The `LauncherForm` creates the viewmodel and binds to it. Also it hooks into the `Window_Closing` event to shutdown the system when it closes.
 
 The ViewModel called `LauncherFormViewModel` sets up some properties to bind the form with:
+
 1. `RepoUrl` property that binds to the TextBox, where we tell it which repository to scan.
 2. `Status` property that binds to the StatusBar on the form.    
 3. `StatusForeColor` property that binds to the color of the status message.
@@ -55,6 +57,7 @@ The `MainFormActor` will use the ViewModel to update the status message and colo
 The `RepoResultForm` displays all the repositories found in a `ListView`, it also creates the viewmodel and binds to it. Also it hooks into the `Window_Closing` event to stop the `RepoResultsActor`.
 
 The ViewModel called `RepoResultsViewModel` sets up some properties to bind the form with:
+
 1. `Title` property that binds to the title of the form.
 2. `Items` property that binds the ListView as a `ReactiveList`.    
 3. `Status` property that binds to the StatusBar on the form.    
