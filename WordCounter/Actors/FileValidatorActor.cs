@@ -15,45 +15,28 @@ namespace WordCounter.Actors
         }
         public FileValidatorActor()
         {
-            Receive<ValidateArgs>( msg => DoValidate( msg ) );
+            Receive<ValidateArgs>( msg => Handle( msg ) );
         }
-        private void DoValidate( ValidateArgs msg )
+        private void Handle( ValidateArgs msg )
         {
             if ( String.IsNullOrEmpty( msg.Folders ) )
             {
                 Sender.Tell( new InvalidArgs( "Folders argument is empty." ) );
             }
 
-            var fullPath = IsFileUri( msg.Folders, msg.Extension );
-            if ( String.IsNullOrEmpty( fullPath ) )
+            if ( Directory.Exists( msg.Folders ) )
             {
-                Sender.Tell( new StatusMessage( String.Format( "Invalid Folder [{0}] [{1}]", msg.Folders, msg.Extension ) ) );
+                var extension = msg.Extension;
+                if ( String.IsNullOrEmpty( extension ) )
+                {
+                    extension = "*.txt";
+                }
+                Sender.Tell( new ValidateArgs( msg.Folders, extension ) );
             }
             else
             {
-                Sender.Tell( new ValidArgs( fullPath ) );
+                Sender.Tell( new StatusMessage( String.Format( "Invalid Folder [{0}] [{1}]", msg.Folders, msg.Extension ) ) );
             }
-        }
-        /// <summary>
-        /// Checks if file exists at path provided by user.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        private static String IsFileUri( string path, string extension )
-        {
-            var directory = String.Empty;
-            var searchPattern = extension;
-            if ( Directory.Exists( path ) )
-            {
-                searchPattern = extension;
-                if ( String.IsNullOrWhiteSpace( searchPattern ) )
-                {
-                    searchPattern = "*.txt";
-                }
-                directory = Path.Combine( path, searchPattern );
-            }
-
-            return directory;
         }
     }
 }

@@ -21,34 +21,34 @@ namespace WordCounter.Actors
             m_vm = vm;
             validator = Context.ActorOf( FileValidatorActor.GetProps(), ActorPaths.FileValidator.Name );
             crawler = Context.ActorOf<DirectoryCrawler>( "directoryCrawler" );
-            ValidatingInput();
+            Ready();
         }
 
-        private void ValidatingInput()
+        private void Ready()
         {
             // receive from parent
-            Receive<StartSearch>( msg => DoValidate( msg ) );
+            Receive<StartSearch>( msg => Handle( msg ) );
 
             // receive from validator
-            Receive<ValidArgs>( msg => DoCrawl( msg ) );
+            Receive<ValidateArgs>( msg => Handle( msg ) );
 
             // receive from crawler
-            Receive<WordsInFileMessage>( msg => DoDisplay( msg ) );
+            Receive<CompletedFile>( msg => Handle( msg ) );
 
             // receive from children
-            Receive<StatusMessage>( msg => DoStatus( msg ) );
+            Receive<StatusMessage>( msg => Handle( msg ) );
             Receive<Done>( msg => Handle( msg ) );
         }
 
-        private void DoValidate( StartSearch msg )
+        private void Handle( StartSearch msg )
         {
             validator.Tell( new ValidateArgs( msg.Folders, msg.Extension ) );
         }
-        private void DoCrawl( ValidArgs msg )
-        {          
-            crawler.Tell( new DirectoryToSearchMessage( msg.Fullpath ) );
+        private void Handle( ValidateArgs msg )
+        {
+            crawler.Tell( new DirectoryToSearchMessage( msg.Folders, msg.Extension ) );
         }
-        private void DoDisplay( WordsInFileMessage msg )
+        private void Handle( CompletedFile msg )
         {
             m_vm.AddItem.OnNext( new ResultItem()
             {
@@ -59,13 +59,13 @@ namespace WordCounter.Actors
                 ElapsedMs = msg.ElapsedMilliseconds
             } );
         }
-        private void DoStatus( StatusMessage msg )
+        private void Handle( StatusMessage msg )
         {
             m_vm.Status = msg.Message;
         }
         private void Handle( Done msg )
         {
-           // m_vm.EnableButton( true );
+            m_vm.Crawling = false;
         }
     }
 }

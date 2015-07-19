@@ -12,7 +12,7 @@ namespace WordCounter.Actors
     public class WordCounterActor : ReceiveActor
     {
         private string fileName;
-        private int lineno = 0;
+        private int lineCount = 0;
         private int linesProcessed = 0;
         private Stopwatch m_sw;
         private int result = 0;
@@ -36,51 +36,52 @@ namespace WordCounter.Actors
 
         private void Ready()
         {
-            Receive<FileToProcessMessage>( msg => Handle( msg ) );
-            Receive<WordsInLineMessage>( msg => Handle( msg ) );
+            Receive<FileToProcess>( msg => Handle( msg ) );
+            Receive<WordCount>( msg => Handle( msg ) );
             Receive<FailureMessage>( msg => Handle( msg ) );
         }
-        public void Handle( FileToProcessMessage message )
+        public void Handle( FileToProcess message )
         {
-            lineno = 0;
+            lineCount = 0;
             linesProcessed = 0;
             result = 0;
             m_sw.Start();
             fileName = message.FileName;
             var router = Context.ActorOf( new RoundRobinPool( 8 )
-                                            .Props( StringCounterActor.Config() ),
+                                            .Props( StringCounterActor.GetProps() ),
                                             String.Format( "liner{0}", message.Fileno ) );
             try
             {
                 foreach ( var line in File.ReadLines( fileName ) )
                 {
-                    // var counterActor = Context.ActorOf<StringCounterActor>();
-                    // counterActor.Tell( new LineToProcessMessage( line ) );
-                    router.Tell( new LineToProcessMessage( line ) );
-                    lineno++;
+                    router.Tell( new ProcessLine( line ) );
+                    lineCount++;
                 }
             }
             catch ( Exception ex )
             {
-
+                Sender.Tell( new FailureMessage( ex, Self ) );
             }
 
             // handle when file is empty
-            if ( lineno == 0 )
+            if ( lineCount == 0 )
             {
-                Sender.Tell( new WordsInFileMessage( fileName, result, 0 ) );
+                Sender.Tell( new CompletedFile( fileName, result, 0 ) );
             }
         }
 
-        public void Handle( WordsInLineMessage message )
+        public void Handle( WordCount message )
         {
+            // aggregate the results
             result += message.WordsInLine;
+            // update lines processed
             linesProcessed++;
+
             // make sure that all lines have been visited.
-            if ( linesProcessed == lineno )
+            if ( linesProcessed == lineCount )
             {
                 m_sw.Stop();
-                Context.Parent.Tell( new WordsInFileMessage( fileName, result, m_sw.ElapsedMilliseconds ) );
+                Context.Parent.Tell( new CompletedFile( fileName, result, m_sw.ElapsedMilliseconds ) );
                 Context.Stop( Self );
             }
         }
@@ -94,26 +95,12 @@ namespace WordCounter.Actors
                 exception = agg.InnerException;
                 agg.Handle( exception1 => true );
             }
-            //writer.Tell( "Error " + fail.Child.Path + " " + exception != null ? exception.Message : "no exception object" );
+            Context.Parent.Tell( "Error " + fail.Child.Path + " " + exception != null ? exception.Message : "no exception object" );
         }
 
         protected override void PreRestart( Exception reason, object message )
         {
             Context.Parent.Tell( new FailureMessage( reason, Self ) );
         }
-
-        //private IEnumerable<string> FileLines( string filename )
-        //{
-        //    using ( var sr = File.OpenText( filename ) )
-        //    {
-        //        while ( true )
-        //        {
-        //            string line = sr.ReadLine();
-        //            if ( line == null )
-        //                yield break;
-        //            yield return line;
-        //        }
-        //    }
-        //}
     }
 }

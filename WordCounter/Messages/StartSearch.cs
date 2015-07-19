@@ -47,9 +47,9 @@ namespace WordCounter.Messages
         public String Fullpath { get; private set; }
     }
 
-    public class LineToProcessMessage
+    public class ProcessLine
     {
-        public LineToProcessMessage( string line )
+        public ProcessLine( string line )
         {
             LineToProcess = line;
         }
@@ -60,18 +60,18 @@ namespace WordCounter.Messages
     }
     public class DirectoryToSearchMessage
     {
-        public DirectoryToSearchMessage( string fullpath )
+        public DirectoryToSearchMessage( string directory, string searchPattern )
         {
-            SearchPattern = "*" + Path.GetExtension( fullpath );
-            DirectoryPath = string.Format( @"{0}\", Path.GetDirectoryName( fullpath ) );
+            Directory = directory;
+            SearchPattern = searchPattern;
         }
-
-        public string DirectoryPath { get; private set; }
         public string SearchPattern { get; private set; }
+        public string Directory { get; private set; }
+
     }
-    public class FileToProcessMessage
+    public class FileToProcess
     {
-        public FileToProcessMessage( string fileName, int fileno )
+        public FileToProcess( string fileName, int fileno )
         {
             Fileno = fileno;
             FileName = fileName;
@@ -91,17 +91,17 @@ namespace WordCounter.Messages
         public Exception Cause { get; private set; }
         public IActorRef Child { get; private set; }
     }
-    public class WordsInLineMessage
+    public class WordCount
     {
-        public WordsInLineMessage( int wordsInLine )
+        public WordCount( int wordsInLine )
         {
             WordsInLine = wordsInLine;
         }
         public int WordsInLine { get; private set; }
     }
-    public class WordsInFileMessage
+    public class CompletedFile
     {
-        public WordsInFileMessage( string fileName, int wordsInFile, long elapsedMilliseconds )
+        public CompletedFile( string fileName, int wordsInFile, long elapsedMilliseconds )
         {
             ElapsedMilliseconds = elapsedMilliseconds;
             FileName = fileName;

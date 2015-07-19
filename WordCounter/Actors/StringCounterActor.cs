@@ -8,7 +8,7 @@ namespace WordCounter.Actors
 {
     public class StringCounterActor : ReceiveActor
     {
-        public static Props Config()
+        public static Props GetProps()
         {
             return Props.Create<StringCounterActor>();
         }
@@ -23,12 +23,12 @@ namespace WordCounter.Actors
 
         private void Ready()
         {
-            Receive<LineToProcessMessage>( msg => Handle( msg ) );
+            Receive<ProcessLine>( msg => Handle( msg ) );
         }
-        public void Handle( LineToProcessMessage message )
+        public void Handle( ProcessLine message )
         {
             var wordsInLine = message.LineToProcess.Split( ' ' ).Length;
-            Sender.Tell( new WordsInLineMessage( wordsInLine ) );
+            Sender.Tell( new WordCount( wordsInLine ) );
         }
 
         protected override void PreRestart( Exception reason, object message )
