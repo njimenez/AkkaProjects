@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2ACA7C23-8CF1-47D0-9074-81D53BAD97E4}</ProjectGuid>
+    <ProjectGuid>{A2800231-841E-49EB-AE44-BF93EC83A78F}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WordCounter</RootNamespace>
-    <AssemblyName>WordCounter</AssemblyName>
+    <RootNamespace>WinTail</RootNamespace>
+    <AssemblyName>WinTail</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -97,16 +97,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Actors\ActorMetaData.cs" />
-    <Compile Include="Actors\ActorPaths.cs" />
-    <Compile Include="Actors\DirectoryCrawler.cs" />
     <Compile Include="Actors\FileEnumeratorActor.cs" />
     <Compile Include="Actors\FileValidatorActor.cs" />
-    <Compile Include="Actors\StringCounterActor.cs" />
-    <Compile Include="Actors\WordCounterActor.cs" />
-    <Compile Include="Actors\WordCounterSupervisor.cs" />
-    <Compile Include="Messages\StartSearch.cs" />
-    <Compile Include="ResultItem.cs" />
+    <Compile Include="Actors\WinTailSupervisor.cs" />
+    <Compile Include="Messages\Class1.cs" />
+    <Compile Include="ViewModels\Class1.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -119,9 +114,15 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="ObserveWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MainWindowViewModel.cs" />
+    <Compile Include="ObserveWindow.xaml.cs">
+      <DependentUpon>ObserveWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -145,7 +146,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <None Include="readme.md" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

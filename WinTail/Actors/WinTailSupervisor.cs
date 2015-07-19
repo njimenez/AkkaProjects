@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using WordCounter.Messages;
+using WinTail.Messages;
 
-namespace WordCounter.Actors
+namespace WinTail.Actors
 {
-    public class WordCounterSupervisor : ReceiveActor
+    public class WinTailSupervisor : ReceiveActor
     {
         private IActorRef crawler;
         private IActorRef validator;
@@ -16,48 +16,42 @@ namespace WordCounter.Actors
         /// Initializes a new instance of the <see cref="WordCounterSupervisor"/> class.
         /// </summary>
         private readonly MainWindowViewModel m_vm;
-        public WordCounterSupervisor( MainWindowViewModel vm )
+        public WinTailSupervisor( MainWindowViewModel vm )
         {
             m_vm = vm;
-            validator = Context.ActorOf( FileValidatorActor.GetProps(), ActorPaths.FileValidator.Name );
-            crawler = Context.ActorOf<DirectoryCrawler>( "directoryCrawler" );
+            validator = Context.ActorOf( FileValidatorActor.GetProps(), "filevalidator" );
+            crawler = Context.ActorOf( FileEnumeratorActor.GetProps(), "file-enumerator" );
             Ready();
         }
 
         private void Ready()
         {
             // receive from parent
-            Receive<StartSearch>( msg => Handle( msg ) );
+            Receive<EnumerateFiles>( msg => Handle( msg ) );
 
             // receive from validator
             Receive<ValidateArgs>( msg => Handle( msg ) );
 
             // receive from crawler
-            Receive<CompletedFile>( msg => Handle( msg ) );
+            Receive<FileInfo>( msg => Handle( msg ) );
 
             // receive from children
             Receive<StatusMessage>( msg => Handle( msg ) );
             Receive<Done>( msg => Handle( msg ) );
         }
 
-        private void Handle( StartSearch msg )
+        private void Handle( EnumerateFiles msg )
         {
             validator.Tell( new ValidateArgs( msg.Folders, msg.Extension ) );
         }
         private void Handle( ValidateArgs msg )
         {
-            crawler.Tell( new DirectoryToSearchMessage( msg.Folders, msg.Extension ) );
+            crawler.Tell( new EnumerateFiles( msg.Folders, msg.Extension ) );
         }
-        private void Handle( CompletedFile msg )
+        private void Handle( FileInfo msg )
         {
-            m_vm.AddItem.OnNext( new ResultItem()
-            {
-                FilePath = msg.FileName,
-                DirectoryPath = Path.GetDirectoryName( msg.FileName ),
-                FileName = Path.GetFileName( msg.FileName ),
-                TotalWords = msg.WordsInFile,
-                ElapsedMs = msg.ElapsedMilliseconds
-            } );
+            m_vm.AddItem.OnNext( msg );
+           
         }
         private void Handle( StatusMessage msg )
         {
@@ -66,7 +60,7 @@ namespace WordCounter.Actors
         private void Handle( Done msg )
         {
             m_vm.Crawling = false;
-            m_vm.Status = string.Format( "Processed {0} file(s) in {1} ms", msg.Count, msg.ElapsedMilliseconds );
+            m_vm.Status = string.Format( "Found {0} file(s) in {1} ms", msg.Count, msg.ElapsedMilliseconds );
         }
     }
 }

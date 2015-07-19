@@ -68,6 +68,11 @@ It handles the following messages:
 * **FailureMessage**
   * Receive from the `WordCounterActor` in case of any failure. 
 
+
+## FileEnumeratorActor
+
+>This [actor](<http://getakka.net/docs/Working%20with%20actors>) handles the enumeration for files in filesystem.
+
 ## WordCounterActor
 
 >This [actor](<http://getakka.net/docs/Working%20with%20actors>) handles the reading of the file and counting the words.

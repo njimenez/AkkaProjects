@@ -114,12 +114,25 @@ namespace WordCounter.Messages
 
     public class StatusMessage
     {
-        
-        public StatusMessage(String message)
+
+        public StatusMessage( String message )
         {
-            Message = message;            
+            Message = message;
         }
         public String Message { get; private set; }
     }
-    public class Done { }
+
+    public class Done
+    {
+        /// <summary>
+        /// Initializes a new instance of the Done class.
+        /// </summary>
+        public Done( int count, long elapsedMs = 0 )
+        {
+            ElapsedMilliseconds = elapsedMs;
+            Count = count;
+        }
+        public int Count { get; private set; }
+        public long ElapsedMilliseconds { get; private set; }
+    }
 }
