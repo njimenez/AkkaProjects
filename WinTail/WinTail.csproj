@@ -99,11 +99,14 @@
     </ApplicationDefinition>
     <Compile Include="Actors\FileEnumeratorActor.cs" />
     <Compile Include="Actors\FileObserver.cs" />
+    <Compile Include="Actors\FileReaderActor.cs" />
     <Compile Include="Actors\FileValidatorActor.cs" />
+    <Compile Include="Actors\TailActor.cs" />
     <Compile Include="Actors\TailCoordinatorActor.cs" />
     <Compile Include="Actors\WinTailSupervisor.cs" />
-    <Compile Include="Messages\Class1.cs" />
-    <Compile Include="ViewModels\Class1.cs" />
+    <Compile Include="Messages\GlobalMessages.cs" />
+    <Compile Include="ViewModels\ObserveWindowViewModel.cs" />
+    <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

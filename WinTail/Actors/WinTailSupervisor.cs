@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using WinTail.Messages;
+using WinTail.ViewModels;
 
 namespace WinTail.Actors
 {

@@ -39,12 +39,14 @@ namespace WinTail.Actors
             // assign callbacks for event types
             _watcher.Changed += OnFileChanged;
             _watcher.Error += OnFileError;
+            _watcher.Deleted += OnFileDeleted;
 
             // start watching
             _watcher.EnableRaisingEvents = true;
 
         }
 
+  
         /// <summary>
         /// Stop monitoring file.
         /// </summary>
@@ -78,6 +80,17 @@ namespace WinTail.Actors
             }
 
         }
+
+        private void OnFileDeleted( object sender, FileSystemEventArgs e )
+        {
+            if ( e.ChangeType == WatcherChangeTypes.Deleted )
+            {
+                // here we use a special ActorRefs.NoSender
+                // since this event can happen many times, this is a little microoptimization
+                _tailActor.Tell( new TailActor.FileDeleted( /*e.Name*/ ), ActorRefs.NoSender );
+            }
+        }
+
 
     }
 }
