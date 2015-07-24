@@ -20,6 +20,7 @@ namespace WinTail.ViewModels
     public class ObserveWindowViewModel : ReactiveObject, IObserveViewModel
     {
         private string m_Filename = String.Empty;
+        private int m_SelectedLine = 0;
         private string m_Status = String.Empty;
         private string m_Title = String.Empty;
         private readonly IActorRef _tailCoordinator;
@@ -37,7 +38,7 @@ namespace WinTail.ViewModels
             // this is how we can update the viewmodel 
             // from the actor. 
             Lines = new Subject<String>();
-            Lines.ObserveOnDispatcher().Subscribe( item => Items.Add( item ) );
+            Lines.ObserveOnDispatcher().Subscribe( item => { Items.Add( item ); SelectedLine = Items.Count - 1; } );
         }
 
         public ReactiveList<String> Items
@@ -67,6 +68,15 @@ namespace WinTail.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged( ref m_Title, value );
+            }
+        }
+
+        public int SelectedLine
+        {
+            get { return m_SelectedLine; }
+            set
+            {
+                this.RaiseAndSetIfChanged( ref m_SelectedLine, value );
             }
         }
 

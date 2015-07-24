@@ -1,8 +1,7 @@
 using Akka.Actor;
 using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using WordCounter.Messages;
 
 namespace WordCounter.Actors
@@ -19,10 +18,11 @@ namespace WordCounter.Actors
      *      Done
      * 
      */
-    
+
     public class FileEnumeratorActor : ReceiveActor
     {
         private int fileCount = 0;
+        private Stopwatch m_sw = new Stopwatch();
         public static Props GetProps()
         {
             return Props.Create<FileEnumeratorActor>();
@@ -44,11 +44,13 @@ namespace WordCounter.Actors
         private void Handle( DirectoryToSearchMessage message )
         {
             fileCount = 0;
+            m_sw.Start();
             EnumerateFiles( Sender, message.Directory, message.SearchPattern );
-            Sender.Tell( new Done( fileCount ) );
+            m_sw.Stop();
+            Sender.Tell( new Done( fileCount, m_sw.Elapsed ) );
+            m_sw.Reset();
         }
-
-
+        
         private void EnumerateFiles( IActorRef sender, string directory, String searchPattern )
         {
             try

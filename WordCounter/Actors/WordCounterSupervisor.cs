@@ -1,8 +1,6 @@
 using Akka.Actor;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using WordCounter.Messages;
 
 namespace WordCounter.Actors
@@ -11,6 +9,11 @@ namespace WordCounter.Actors
     {
         private IActorRef crawler;
         private IActorRef validator;
+
+        public static Props GetProps( MainWindowViewModel vm )
+        {
+            return Props.Create( () => new WordCounterSupervisor( vm ) );
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WordCounterSupervisor"/> class.
@@ -56,6 +59,7 @@ namespace WordCounter.Actors
                 DirectoryPath = Path.GetDirectoryName( msg.FileName ),
                 FileName = Path.GetFileName( msg.FileName ),
                 TotalWords = msg.WordsInFile,
+                TotalLines = msg.LinesInFile,
                 ElapsedMs = msg.ElapsedMilliseconds
             } );
         }
@@ -66,7 +70,33 @@ namespace WordCounter.Actors
         private void Handle( Done msg )
         {
             m_vm.Crawling = false;
-            m_vm.Status = string.Format( "Processed {0} file(s) in {1} ms", msg.Count, msg.ElapsedMilliseconds );
+            m_vm.Status = string.Format( "Processed {0:N0} file(s) in total time of {1}", msg.Count, Convert( msg.ElapsedTime ) );
         }
+
+        private String Convert( TimeSpan ts )
+        {
+            var result = String.Empty;
+
+            if ( ts.Hours > 0 )
+            {
+                result = string.Format( "{0:D} hours", ts.Hours );
+            }
+
+            if ( ts.Minutes > 0 )
+            {
+                result += string.Format( " {0:D} min", ts.Minutes );
+            }
+            if ( ts.Seconds > 0 )
+            {
+                result += string.Format( " {0:D} secs", ts.Seconds );
+            }
+
+            if ( ts.Milliseconds > 0 )
+            {
+                result += string.Format( " {0:D3} millsecs", ts.Milliseconds );
+            }
+            return result;
+        }
+
     }
 }

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace WinTail.Messages
 {
@@ -65,12 +63,13 @@ namespace WinTail.Messages
         /// <summary>
         /// Initializes a new instance of the Done class.
         /// </summary>
-        public Done( int count, long elapsedMs = 0 )
+        public Done( int count, TimeSpan elapsedMs )
         {
-            ElapsedMilliseconds = elapsedMs;
+            ElapsedTime = elapsedMs;
             Count = count;
         }
         public int Count { get; private set; }
-        public long ElapsedMilliseconds { get; private set; }
+        public TimeSpan ElapsedTime
+        { get; private set; }
     }
 }

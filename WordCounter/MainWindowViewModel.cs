@@ -19,7 +19,7 @@ namespace WordCounter
         public MainWindowViewModel()
         {
             Extension = "*.txt";
-            Folders = @"C:\";
+            Folders = @"c:\";
             Items = new ReactiveList<ResultItem>();
 
             CountCommand = ReactiveCommand.Create();
@@ -30,11 +30,11 @@ namespace WordCounter
             AddItem = new Subject<ResultItem>();
             AddItem.ObserveOnDispatcher().Subscribe( item => Items.Add( item ) );
 
-            var props = Props.Create( () => new WordCounterSupervisor( this ) );
-            m_vmActor = App.WordCounterSystem.ActorOf( props, ActorPaths.WordCounterSupervisorActor.Name );
+            m_vmActor = App.WordCounterSystem.ActorOf( WordCounterSupervisor.GetProps( this ), ActorPaths.WordCounterSupervisorActor.Name );
         }
 
-        public ReactiveList<ResultItem> Items { get; set; }
+        public ReactiveList<ResultItem> Items
+        { get; set; }
         public string Folders
         {
             get { return m_Folders; }
@@ -68,8 +68,10 @@ namespace WordCounter
             }
         }
 
-        public Subject<ResultItem> AddItem { get; set; }
-        public ReactiveCommand<object> CountCommand { get; private set; }
+        public Subject<ResultItem> AddItem
+        { get; set; }
+        public ReactiveCommand<object> CountCommand
+        { get; private set; }
 
         public void Done()
         {

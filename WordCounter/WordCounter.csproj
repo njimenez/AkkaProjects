@@ -105,7 +105,7 @@
     <Compile Include="Actors\StringCounterActor.cs" />
     <Compile Include="Actors\WordCounterActor.cs" />
     <Compile Include="Actors\WordCounterSupervisor.cs" />
-    <Compile Include="Messages\StartSearch.cs" />
+    <Compile Include="Messages\GlobalMessages.cs" />
     <Compile Include="ResultItem.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -150,7 +150,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="counter.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

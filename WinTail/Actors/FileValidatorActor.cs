@@ -1,8 +1,6 @@
 using Akka.Actor;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using WinTail.Messages;
 
 namespace WinTail.Actors

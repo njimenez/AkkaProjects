@@ -9,7 +9,7 @@
                       Closing="MetroWindow_Closing">
     <Grid>
         <ListBox Margin="5"
-                 ItemsSource="{Binding Items}">
+                 ItemsSource="{Binding Items}" SelectedIndex="{Binding SelectedLine}">
         </ListBox>
     </Grid>
 </Controls:MetroWindow>

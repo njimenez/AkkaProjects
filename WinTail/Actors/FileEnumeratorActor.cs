@@ -1,8 +1,7 @@
 ﻿using Akka.Actor;
 using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using WinTail.Messages;
 
 namespace WinTail.Actors
@@ -23,6 +22,8 @@ namespace WinTail.Actors
     public class FileEnumeratorActor : ReceiveActor
     {
         private int fileCount = 0;
+        private Stopwatch m_sw = new Stopwatch();
+
         public static Props GetProps()
         {
             return Props.Create<FileEnumeratorActor>();
@@ -43,9 +44,18 @@ namespace WinTail.Actors
 
         private void Handle( EnumerateFiles message )
         {
+            m_sw.Start();
             fileCount = 0;
-            EnumerateFiles( Sender, message.Folders, message.Extension );
-            Sender.Tell( new Done( fileCount ) );
+
+            var multiplePatterns = message.Extension.Split( ',' );
+            foreach ( string extension in multiplePatterns )
+            {
+                EnumerateFiles( Sender, message.Folders, extension );
+            }
+
+            m_sw.Stop();
+            Sender.Tell( new Done( fileCount, m_sw.Elapsed ) );
+            m_sw.Reset();
         }
 
 

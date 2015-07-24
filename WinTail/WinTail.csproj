@@ -105,6 +105,7 @@
     <Compile Include="Actors\TailCoordinatorActor.cs" />
     <Compile Include="Actors\WinTailSupervisor.cs" />
     <Compile Include="Messages\GlobalMessages.cs" />
+    <Compile Include="ViewModels\FileInfoViewModel.cs" />
     <Compile Include="ViewModels\ObserveWindowViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Page Include="MainWindow.xaml">

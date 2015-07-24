@@ -1,9 +1,6 @@
 using Akka.Actor;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using WinTail.Messages;
 using WinTail.ViewModels;
 
@@ -13,11 +10,12 @@ namespace WinTail.Actors
     {
         private IActorRef fileEnumerator;
         private IActorRef validator;
+        
         private readonly MainWindowViewModel m_vm;
 
         public static Props GetProps( MainWindowViewModel vm )
         {
-            return Props.Create( () => new WinTailSupervisor( vm) );
+            return Props.Create( () => new WinTailSupervisor( vm ) );
         }
 
         /// <summary>
@@ -27,7 +25,7 @@ namespace WinTail.Actors
         {
             m_vm = vm;
             validator = Context.ActorOf( FileValidatorActor.GetProps(), "filevalidator" );
-            fileEnumerator = Context.ActorOf( FileEnumeratorActor.GetProps(), "file-enumerator" );            
+            fileEnumerator = Context.ActorOf( FileEnumeratorActor.GetProps(), "file-enumerator" );
             Ready();
         }
 
@@ -57,7 +55,14 @@ namespace WinTail.Actors
         }
         private void Handle( FileInfo msg )
         {
-            m_vm.AddItem.OnNext( msg );
+            m_vm.Status = "Processing file " + msg.FullName;
+            m_vm.AddItem.OnNext( new FileInfoViewModel()
+            {
+                DirectoryName = msg.DirectoryName.ToLower(),
+                Name = msg.Name,
+                Length = msg.Length,
+                FullName = msg.FullName
+            } );
         }
         private void Handle( StatusMessage msg )
         {
@@ -66,7 +71,31 @@ namespace WinTail.Actors
         private void Handle( Done msg )
         {
             m_vm.Crawling = false;
-            m_vm.Status = string.Format( "Found {0} file(s) in {1} ms", msg.Count, msg.ElapsedMilliseconds );
+            m_vm.Status = string.Format( "Processed {0:N0} file(s) in total time of {1}", msg.Count, Convert( msg.ElapsedTime ) );
+        }
+        private String Convert( TimeSpan ts )
+        {
+            var result = String.Empty;
+
+            if ( ts.Hours > 0 )
+            {
+                result = string.Format( "{0:D} hours", ts.Hours );
+            }
+
+            if ( ts.Minutes > 0 )
+            {
+                result += string.Format( " {0:D} min", ts.Minutes );
+            }
+            if ( ts.Seconds > 0 )
+            {
+                result += string.Format( " {0:D} secs", ts.Seconds );
+            }
+
+            if ( ts.Milliseconds > 0 )
+            {
+                result += string.Format( " {0:D3} millsecs", ts.Milliseconds );
+            }
+            return result;
         }
     }
 }

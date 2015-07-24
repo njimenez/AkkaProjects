@@ -1,9 +1,7 @@
 using Akka.Actor;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using WordCounter.Messages;
 
 namespace WordCounter.Actors
@@ -65,13 +63,13 @@ namespace WordCounter.Actors
             CrawlingFinished();
         }
 
-    
+
         public void Handle( FailureMessage fail )
         {
             var exception = fail.Cause;
             if ( exception is AggregateException )
             {
-                var agg = (AggregateException)exception;
+                var agg = ( AggregateException )exception;
                 exception = agg.InnerException;
                 agg.Handle( exception1 => true );
             }
@@ -83,8 +81,7 @@ namespace WordCounter.Actors
             if ( CrawlingDone && ( fileProcessed == fileno ) )
             {
                 m_sw.Stop();
-                //Context.Parent.Tell( new StatusMessage( string.Format( "Processed {0} file(s) in {1} ms", fileno, m_sw.ElapsedMilliseconds ) ) );
-                Context.Parent.Tell( new Done( fileProcessed, m_sw.ElapsedMilliseconds ) );
+                Context.Parent.Tell( new Done( fileProcessed, m_sw.Elapsed ) );
                 m_sw.Reset();
             }
         }

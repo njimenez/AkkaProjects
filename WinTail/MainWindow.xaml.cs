@@ -1,12 +1,4 @@
-﻿using Akka.Actor;
-using MahApps.Metro.Controls;
-using System;
-using System.IO;
-using ReactiveUI;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
-using WinTail.Actors;
-using WinTail.Messages;
+﻿using MahApps.Metro.Controls;
 using WinTail.ViewModels;
 
 namespace WinTail
