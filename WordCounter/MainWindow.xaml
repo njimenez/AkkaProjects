@@ -42,8 +42,7 @@
                  Text="{Binding Path=Extension, Mode=TwoWay}"></TextBox>
 
         <!-- http://wpftutorial.net/DataGrid.html -->
-        <DataGrid Grid.ColumnSpan="2" Grid.Row="2" Grid.Column="0" Margin="5" ItemsSource="{Binding Items}">
-            
+        <DataGrid Grid.ColumnSpan="2" Grid.Row="2" Grid.Column="0" Margin="5" ItemsSource="{Binding Items}">            
         </DataGrid>
         
         <Button  Grid.Row="0"

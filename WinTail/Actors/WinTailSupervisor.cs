@@ -3,24 +3,30 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using WinTail.Messages;
 
 namespace WinTail.Actors
 {
     public class WinTailSupervisor : ReceiveActor
     {
-        private IActorRef crawler;
+        private IActorRef fileEnumerator;
         private IActorRef validator;
+        private readonly MainWindowViewModel m_vm;
+
+        public static Props GetProps( MainWindowViewModel vm )
+        {
+            return Props.Create( () => new WinTailSupervisor( vm) );
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WordCounterSupervisor"/> class.
         /// </summary>
-        private readonly MainWindowViewModel m_vm;
         public WinTailSupervisor( MainWindowViewModel vm )
         {
             m_vm = vm;
             validator = Context.ActorOf( FileValidatorActor.GetProps(), "filevalidator" );
-            crawler = Context.ActorOf( FileEnumeratorActor.GetProps(), "file-enumerator" );
+            fileEnumerator = Context.ActorOf( FileEnumeratorActor.GetProps(), "file-enumerator" );            
             Ready();
         }
 
@@ -46,12 +52,11 @@ namespace WinTail.Actors
         }
         private void Handle( ValidateArgs msg )
         {
-            crawler.Tell( new EnumerateFiles( msg.Folders, msg.Extension ) );
+            fileEnumerator.Tell( new EnumerateFiles( msg.Folders, msg.Extension ) );
         }
         private void Handle( FileInfo msg )
         {
             m_vm.AddItem.OnNext( msg );
-           
         }
         private void Handle( StatusMessage msg )
         {

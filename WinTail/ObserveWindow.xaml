@@ -5,8 +5,11 @@
                       Title="{Binding Title}"
                       Height="300"
                       Width="300"
-                      GlowBrush="{DynamicResource AccentColorBrush}">
+                      GlowBrush="{DynamicResource AccentColorBrush}"
+                      Closing="MetroWindow_Closing">
     <Grid>
-
+        <ListBox Margin="5"
+                 ItemsSource="{Binding Items}">
+        </ListBox>
     </Grid>
 </Controls:MetroWindow>
