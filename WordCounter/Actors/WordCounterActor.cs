@@ -1,10 +1,8 @@
 using Akka.Actor;
 using Akka.Routing;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using WordCounter.Messages;
 
 namespace WordCounter.Actors
@@ -66,7 +64,8 @@ namespace WordCounter.Actors
             // handle when file is empty
             if ( lineCount == 0 )
             {
-                Sender.Tell( new CompletedFile( fileName, result, 0 ) );
+                Sender.Tell( new CompletedFile( fileName, result, lineCount, 0 ) );
+                Context.Stop( Self );
             }
         }
 
@@ -81,21 +80,14 @@ namespace WordCounter.Actors
             if ( linesProcessed == lineCount )
             {
                 m_sw.Stop();
-                Context.Parent.Tell( new CompletedFile( fileName, result, m_sw.ElapsedMilliseconds ) );
+                Context.Parent.Tell( new CompletedFile( fileName, result, lineCount, m_sw.ElapsedMilliseconds ) );
                 Context.Stop( Self );
             }
         }
 
         public void Handle( FailureMessage fail )
         {
-            var exception = fail.Cause;
-            if ( exception is AggregateException )
-            {
-                var agg = (AggregateException)exception;
-                exception = agg.InnerException;
-                agg.Handle( exception1 => true );
-            }
-            Context.Parent.Tell( "Error " + fail.Child.Path + " " + exception != null ? exception.Message : "no exception object" );
+            Context.Parent.Tell( fail );
         }
 
         protected override void PreRestart( Exception reason, object message )

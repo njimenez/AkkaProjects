@@ -1,8 +1,6 @@
 using Akka.Actor;
 using ReactiveUI;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using WordCounter.Actors;
@@ -12,7 +10,7 @@ namespace WordCounter
 {
     public class MainWindowViewModel : ReactiveObject
     {
-        private Boolean m_Crawling = false;
+        private bool m_Crawling;
         private string m_Extension = String.Empty;
         private string m_Folders = String.Empty;
         private string m_Status = String.Empty;
@@ -21,7 +19,7 @@ namespace WordCounter
         public MainWindowViewModel()
         {
             Extension = "*.txt";
-            Folders = @"C:\";
+            Folders = @"c:\";
             Items = new ReactiveList<ResultItem>();
 
             CountCommand = ReactiveCommand.Create();
@@ -32,11 +30,11 @@ namespace WordCounter
             AddItem = new Subject<ResultItem>();
             AddItem.ObserveOnDispatcher().Subscribe( item => Items.Add( item ) );
 
-            var props = Props.Create( () => new WordCounterSupervisor( this ) );
-            m_vmActor = App.WordCounterSystem.ActorOf( props, ActorPaths.WordCounterSupervisorActor.Name );
+            m_vmActor = App.WordCounterSystem.ActorOf( WordCounterSupervisor.GetProps( this ), ActorPaths.WordCounterSupervisorActor.Name );
         }
 
-        public ReactiveList<ResultItem> Items { get; set; }
+        public ReactiveList<ResultItem> Items
+        { get; set; }
         public string Folders
         {
             get { return m_Folders; }
@@ -61,7 +59,7 @@ namespace WordCounter
                 this.RaiseAndSetIfChanged( ref m_Status, value );
             }
         }
-        public Boolean Crawling
+        public bool Crawling
         {
             get { return m_Crawling; }
             set
@@ -70,8 +68,10 @@ namespace WordCounter
             }
         }
 
-        public Subject<ResultItem> AddItem { get; set; }
-        public ReactiveCommand<object> CountCommand { get; private set; }
+        public Subject<ResultItem> AddItem
+        { get; set; }
+        public ReactiveCommand<object> CountCommand
+        { get; private set; }
 
         public void Done()
         {
@@ -86,7 +86,6 @@ namespace WordCounter
             Crawling = true;
             Items.Clear();
             m_vmActor.Tell( new StartSearch( Folders, Extension ) );
-
         }
     }
 }

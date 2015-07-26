@@ -1,77 +1,75 @@
 using Akka.Actor;
 using System;
 using System.IO;
-using WordCounter.Messages;
+using WinTail.Messages;
+using WinTail.ViewModels;
 
-namespace WordCounter.Actors
+namespace WinTail.Actors
 {
-    public class WordCounterSupervisor : ReceiveActor
+    public class WinTailSupervisor : ReceiveActor
     {
-        private IActorRef crawler;
+        private IActorRef fileEnumerator;
         private IActorRef validator;
+        private IActorRef tailCoordinator;
+
+        private readonly MainWindowViewModel m_vm;
 
         public static Props GetProps( MainWindowViewModel vm )
         {
-            return Props.Create( () => new WordCounterSupervisor( vm ) );
+            return Props.Create( () => new WinTailSupervisor( vm ) );
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WordCounterSupervisor"/> class.
         /// </summary>
-        private readonly MainWindowViewModel m_vm;
-        public WordCounterSupervisor( MainWindowViewModel vm )
+        public WinTailSupervisor( MainWindowViewModel vm )
         {
             m_vm = vm;
-            validator = Context.ActorOf( FileValidatorActor.GetProps(), ActorPaths.FileValidator.Name );
-            crawler = Context.ActorOf<DirectoryCrawler>( "directoryCrawler" );
+            validator = Context.ActorOf( FileValidatorActor.GetProps(), "filevalidator" );
+            fileEnumerator = Context.ActorOf( FileEnumeratorActor.GetProps(), "file-enumerator" );
+            tailCoordinator = Context.ActorOf( TailCoordinatorActor.GetProps(), "tailcoordinator" );
             Ready();
         }
+
         private void Ready()
         {
             // receive from parent
-            Receive<StartSearch>( msg => Handle( msg ) );
+            Receive<EnumerateFiles>( msg => Handle( msg ) );
 
             // receive from validator
             Receive<ValidateArgs>( msg => Handle( msg ) );
 
-            // receive when arguments are invalid
-            Receive<InvalidArgs>( msg => Handle( msg ) );
-
             // receive from crawler
-            Receive<CompletedFile>( msg => Handle( msg ) );
+            Receive<FileInfo>( msg => Handle( msg ) );
 
             // receive from children
             Receive<StatusMessage>( msg => Handle( msg ) );
             Receive<Done>( msg => Handle( msg ) );
         }
-        private void Handle( StartSearch msg )
+
+        private void Handle( EnumerateFiles msg )
         {
             validator.Tell( new ValidateArgs( msg.Folders, msg.Extension ) );
         }
         private void Handle( ValidateArgs msg )
         {
-            crawler.Tell( new DirectoryToSearchMessage( msg.Folders, msg.Extension ) );
+            fileEnumerator.Tell( new EnumerateFiles( msg.Folders, msg.Extension ) );
         }
-        private void Handle( InvalidArgs msg )
+        private void Handle( FileInfo msg )
         {
-            m_vm.Status = msg.ErrorMessage;
-            m_vm.Crawling = false;
-        }
-        private void Handle( CompletedFile msg )
-        {
-            m_vm.AddItem.OnNext( new ResultItem()
+            m_vm.Status = "Processing file " + msg.FullName;
+            m_vm.AddItem.OnNext( new FileInfoViewModel()
             {
-                FilePath = msg.FileName,
-                DirectoryPath = Path.GetDirectoryName( msg.FileName ),
-                FileName = Path.GetFileName( msg.FileName ),
-                TotalWords = msg.WordsInFile,
-                TotalLines = msg.LinesInFile,
-                ElapsedMs = msg.ElapsedMilliseconds
+                DirectoryName = msg.DirectoryName.ToLower(),
+                Name = msg.Name,
+                Length = msg.Length,
+                FullName = msg.FullName
             } );
         }
         private void Handle( StatusMessage msg )
         {
             m_vm.Status = msg.Message;
+            m_vm.Crawling = false;
         }
         private void Handle( Done msg )
         {
@@ -102,6 +100,5 @@ namespace WordCounter.Actors
             }
             return result;
         }
-
     }
 }

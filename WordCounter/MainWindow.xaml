@@ -7,6 +7,7 @@
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       mc:Ignorable="d"
                       Title="Akka Word Counter"
+                      Icon="./counter.png"
                       Height="350"
                       Width="525"
                       GlowBrush="{DynamicResource AccentColorBrush}">
@@ -40,24 +41,47 @@
                  Controls:TextBoxHelper.Watermark="enter file search pattern (*.txt)"
                  Margin="5"
                  Text="{Binding Path=Extension, Mode=TwoWay}"></TextBox>
+        <Border BorderBrush="LightGray"
+                BorderThickness="1"
+                Grid.ColumnSpan="2"
+                Grid.Row="2"
+                Grid.Column="0"
+                Margin="5">
+            <!-- http://wpftutorial.net/DataGrid.html -->
+            <DataGrid AutoGenerateColumns="False"
+                      ItemsSource="{Binding Items}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Directory"
+                                        Binding="{Binding Path=DirectoryPath}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="FileName"
+                                        Binding="{Binding Path=FileName}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Words Count"
+                                        Binding="{Binding Path=TotalWords, StringFormat={}{0:N0}}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Lines Count"
+                                        Binding="{Binding Path=TotalLines, StringFormat={}{0:N0}}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Elapsed (ms)"
+                                        Binding="{Binding Path=ElapsedMs}"></DataGridTextColumn>
+                </DataGrid.Columns>
 
-        <!-- http://wpftutorial.net/DataGrid.html -->
-        <DataGrid Grid.ColumnSpan="2" Grid.Row="2" Grid.Column="0" Margin="5" ItemsSource="{Binding Items}">
-            
-        </DataGrid>
-        
+            </DataGrid>
+        </Border>
         <Button  Grid.Row="0"
                  Grid.Column="1"
                  Margin="5"
                  Content="count"
                  Style="{StaticResource AccentedSquareButtonStyle}"
                  Command="{Binding CountCommand}">
-            
+
         </Button>
+        <CheckBox Grid.Row="1"
+                  Grid.Column="1"
+                  IsChecked="{Binding Crawling}"
+                  Content="{Binding Crawling, Mode=TwoWay}"></CheckBox>
 
         <StatusBar Grid.Row="3"
                    Grid.Column="0"
-                   Grid.ColumnSpan="3">
+                   Grid.ColumnSpan="3"
+                   Margin="5">
             <StatusBarItem Content="{Binding Path=Status}"></StatusBarItem>
         </StatusBar>
 

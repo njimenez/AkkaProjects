@@ -1,9 +1,9 @@
 using Akka.Actor;
 using System;
 using System.IO;
-using WordCounter.Messages;
+using WinTail.Messages;
 
-namespace WordCounter.Actors
+namespace WinTail.Actors
 {
     public class FileValidatorActor : ReceiveActor
     {
@@ -20,9 +20,8 @@ namespace WordCounter.Actors
             if ( String.IsNullOrEmpty( msg.Folders ) )
             {
                 Sender.Tell( new InvalidArgs( "Folders argument is empty." ) );
-                
             }
-            else
+
             if ( Directory.Exists( msg.Folders ) )
             {
                 var extension = msg.Extension;
@@ -34,7 +33,7 @@ namespace WordCounter.Actors
             }
             else
             {
-                Sender.Tell( new InvalidArgs( String.Format( "Invalid Folder [{0}] [{1}]", msg.Folders, msg.Extension ) ) );
+                Sender.Tell( new StatusMessage( String.Format( "Invalid Folder [{0}] [{1}]", msg.Folders, msg.Extension ) ) );
             }
         }
     }
