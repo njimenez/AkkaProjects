@@ -5,8 +5,13 @@ Original sample code from [link](http://www.toptal.com/scala/concurrency-and-fau
 
 # Introduction
 
-Here we are going to tackle the problem of counting the number of words in files. We will need a directory to start crawling and a search pattern to search for. Then for each directory and its children we will get the files that match the search pattern to count the number of words and display it in a grid.
+We are going to tackle the problem of counting the number of words contained in files. We will need a directory to start crawling and a search pattern to search for. This will only work on text files. Then for each directory and its children we will get the files that match the search pattern to count the number of words and display it in a grid.
 
+![MainWindow](Images/MainWindow-01.png)
+
+The Main window consists of two textboxes, a button, and a Datagrid. The top textbox will have the directory to search, and the second textbox will will have the search pattern. The Count Button will start things off and the results will be displayed in the Datagrid.   
+
+# Explaining the source code
 
 We start with the `App.xaml.cs`, on the `OnStartup` method we create our [ActorSystem](<http://getakka.net/docs/concepts/actorsystem>) as a static member of the App class. that way we can always get to it by referencing the App class.
 
@@ -16,6 +21,9 @@ The `MainWindowViewModel` sets up the MainWindow by initializing some property m
 
 When we click on the button on the MainWindow, we tell the WordCounterSupervisorActor to start the search.
 
+## Message Flow Diagram
+
+![message-flow-diagram](Images/message-diagram.png)
 
 ## Actors Involved
 
@@ -55,23 +63,34 @@ It handles the following message:
 
 ## DirectoryCrawlerActor
 
->This [actor](<http://getakka.net/docs/Working%20with%20actors>) handles the crawling of files, and passes the files to a `WordCounterActor` for processing
+>This [actor](<http://getakka.net/docs/Working%20with%20actors>) handles the crawling of files, and passes the files to a `WordCounterActor` for processing. It creates the FileEnumeratorActor to enumerate the diretories. 
 
 It handles the following messages:
 
 * **DirectoryToSearchMessage**
   * Received from the Supervisor when arguments are valid and starts to process the files. It will create a `WordCounterActor` per file.
 
+* **FileInfo**
+  * Received from the `FileEnumeratorActor` when a file is found to meet the search criteria.
+  
 * **CompletedFile**
   * Received from the `WordCounterActor` to signal a counted file.
 
 * **FailureMessage**
   * Receive from the `WordCounterActor` in case of any failure. 
 
-
+* **Done**
+  * Received from the `FileEnumeratorActor` when the directory enumeration is done.
+  
+  
 ## FileEnumeratorActor
 
 >This [actor](<http://getakka.net/docs/Working%20with%20actors>) handles the enumeration for files in filesystem.
+
+It handles the following message
+
+* **DirectoryToSearchMessage**
+  * Received from the `DirectoryCrawler` actor to start enumerating the files that meet the search criteria.
 
 ## WordCounterActor
 
@@ -84,8 +103,8 @@ It handles the following messages:
   * It creates a [RoundRobinPool](<http://getakka.net/docs/working-with-actors/Routers#roundrobin>) of 8 `StringCounterActors` to process the file.    
 
 * **WordCount**
-  * Received from the `StringCounterActor` for every line containing the number of words in the line.
-  * When the full file is read then it sends its parent a CompletedFile message with the statistics gathered.
+  * Received from the `StringCounterActor` for every line containing the number of words in the line. It aggregates     the count until all the lines have been processed.
+  * When the full file is read then it sends its parent a `CompletedFile` message with the statistics gathered.
   * Then it stops itself.
 
 * **FailureMessage**
@@ -99,3 +118,4 @@ It handles the following message:
 
 * **LineToProcess**
   * Received from the `WordCounterActor` to process one line of text.
+  * It counts the number of words in the line and sends back a `WordCount` message

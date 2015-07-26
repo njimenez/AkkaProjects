@@ -26,7 +26,6 @@ namespace WordCounter.Actors
             crawler = Context.ActorOf<DirectoryCrawler>( "directoryCrawler" );
             Ready();
         }
-
         private void Ready()
         {
             // receive from parent
@@ -35,6 +34,9 @@ namespace WordCounter.Actors
             // receive from validator
             Receive<ValidateArgs>( msg => Handle( msg ) );
 
+            // receive when arguments are invalid
+            Receive<InvalidArgs>( msg => Handle( msg ) );
+
             // receive from crawler
             Receive<CompletedFile>( msg => Handle( msg ) );
 
@@ -42,7 +44,6 @@ namespace WordCounter.Actors
             Receive<StatusMessage>( msg => Handle( msg ) );
             Receive<Done>( msg => Handle( msg ) );
         }
-
         private void Handle( StartSearch msg )
         {
             validator.Tell( new ValidateArgs( msg.Folders, msg.Extension ) );
@@ -50,6 +51,11 @@ namespace WordCounter.Actors
         private void Handle( ValidateArgs msg )
         {
             crawler.Tell( new DirectoryToSearchMessage( msg.Folders, msg.Extension ) );
+        }
+        private void Handle( InvalidArgs msg )
+        {
+            m_vm.Status = msg.ErrorMessage;
+            m_vm.Crawling = false;
         }
         private void Handle( CompletedFile msg )
         {
@@ -72,7 +78,6 @@ namespace WordCounter.Actors
             m_vm.Crawling = false;
             m_vm.Status = string.Format( "Processed {0:N0} file(s) in total time of {1}", msg.Count, Convert( msg.ElapsedTime ) );
         }
-
         private String Convert( TimeSpan ts )
         {
             var result = String.Empty;

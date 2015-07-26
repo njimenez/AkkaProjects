@@ -49,7 +49,6 @@ namespace WordCounter.Messages
         public String Fullpath
         { get; private set; }
     }
-
     public class ProcessLine
     {
         public ProcessLine( string line )
@@ -59,10 +58,7 @@ namespace WordCounter.Messages
         public string LineToProcess
         { get; private set; }
     }
-    public class FinishMessage
-    {
-    }
-    public class DirectoryToSearchMessage
+     public class DirectoryToSearchMessage
     {
         public DirectoryToSearchMessage( string directory, string searchPattern )
         {
@@ -143,7 +139,7 @@ namespace WordCounter.Messages
         /// <summary>
         /// Initializes a new instance of the Done class.
         /// </summary>
-        public Done( int count, TimeSpan elapsedMs  )
+        public Done( int count, TimeSpan elapsedMs )
         {
             ElapsedTime = elapsedMs;
             Count = count;

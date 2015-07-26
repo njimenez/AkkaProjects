@@ -31,8 +31,6 @@ namespace WinTail.ViewModels
             ObserveCommand = ReactiveCommand.Create();
             ObserveCommand.Subscribe( x => ObserveFile() );
 
-
-
             AddItem = new Subject<FileInfoViewModel>();
             AddItem.ObserveOnDispatcher().Subscribe( item => Items.Add( item ) );
 
@@ -40,10 +38,14 @@ namespace WinTail.ViewModels
             m_tailCoordinator = App.WinTailSystem.ActorOf( TailCoordinatorActor.GetProps(), "tailcoordinator" );
         }
 
-        public ReactiveList<FileInfoViewModel> Items { get; set; }
-        public Subject<FileInfoViewModel> AddItem { get; set; }
-        public ReactiveCommand<object> CrawlCommand { get; private set; }
-        public ReactiveCommand<object> ObserveCommand { get; private set; }
+        public ReactiveList<FileInfoViewModel> Items
+        { get; set; }
+        public Subject<FileInfoViewModel> AddItem
+        { get; set; }
+        public ReactiveCommand<object> CrawlCommand
+        { get; private set; }
+        public ReactiveCommand<object> ObserveCommand
+        { get; private set; }
 
         public FileInfoViewModel SelectedItem
         {
@@ -117,6 +119,7 @@ namespace WinTail.ViewModels
         }
         public void ObserveFile()
         {
+            // had to put this catch here; because if you double click on the vertical scroll bar this gets fired.
             if ( SelectedItem == null )
             {
                 return;

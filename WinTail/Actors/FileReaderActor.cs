@@ -47,7 +47,7 @@ namespace WinTail.Actors
         private void Handle( TailActor.ReadToEnd msg )
         {
             var line = _fileStreamReader.ReadLine();
-            while ( !String.IsNullOrEmpty( line ) )
+            while ( line != null )
             {
                 Context.Parent.Tell( new TailActor.LineRead( line ) );
                 line = _fileStreamReader.ReadLine();

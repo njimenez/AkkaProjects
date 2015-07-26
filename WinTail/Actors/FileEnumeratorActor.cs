@@ -57,8 +57,7 @@ namespace WinTail.Actors
             Sender.Tell( new Done( fileCount, m_sw.Elapsed ) );
             m_sw.Reset();
         }
-
-
+        
         private void EnumerateFiles( IActorRef sender, string directory, String searchPattern )
         {
             try

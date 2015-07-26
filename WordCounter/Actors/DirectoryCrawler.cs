@@ -8,7 +8,7 @@ namespace WordCounter.Actors
 {
     public class DirectoryCrawler : ReceiveActor
     {
-        private IActorRef crawlActor;
+        private IActorRef EnumeratorActor;
         private bool CrawlingDone = false;
         private int fileno = 0;
         private int fileProcessed = 0;
@@ -21,7 +21,7 @@ namespace WordCounter.Actors
         public DirectoryCrawler()
         {
 
-            crawlActor = Context.ActorOf( FileEnumeratorActor.GetProps() );
+            EnumeratorActor = Context.ActorOf( FileEnumeratorActor.GetProps() );
 
             Receive<DirectoryToSearchMessage>( msg => Handle( msg ) );
             Receive<FileInfo>( msg => Handle( msg ) );
@@ -38,7 +38,7 @@ namespace WordCounter.Actors
             CrawlingDone = false;
 
             m_sw.Start();
-            crawlActor.Tell( message );
+            EnumeratorActor.Tell( message );
         }
 
         private void Handle( FileInfo msg )

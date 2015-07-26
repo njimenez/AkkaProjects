@@ -10,7 +10,7 @@ namespace WordCounter
 {
     public class MainWindowViewModel : ReactiveObject
     {
-        private Boolean m_Crawling = false;
+        private bool m_Crawling;
         private string m_Extension = String.Empty;
         private string m_Folders = String.Empty;
         private string m_Status = String.Empty;
@@ -59,7 +59,7 @@ namespace WordCounter
                 this.RaiseAndSetIfChanged( ref m_Status, value );
             }
         }
-        public Boolean Crawling
+        public bool Crawling
         {
             get { return m_Crawling; }
             set
@@ -86,7 +86,6 @@ namespace WordCounter
             Crawling = true;
             Items.Clear();
             m_vmActor.Tell( new StartSearch( Folders, Extension ) );
-
         }
     }
 }

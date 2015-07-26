@@ -65,6 +65,7 @@ namespace WordCounter.Actors
             if ( lineCount == 0 )
             {
                 Sender.Tell( new CompletedFile( fileName, result, lineCount, 0 ) );
+                Context.Stop( Self );
             }
         }
 
@@ -86,14 +87,7 @@ namespace WordCounter.Actors
 
         public void Handle( FailureMessage fail )
         {
-            var exception = fail.Cause;
-            if ( exception is AggregateException )
-            {
-                var agg = (AggregateException)exception;
-                exception = agg.InnerException;
-                agg.Handle( exception1 => true );
-            }
-            Context.Parent.Tell( "Error " + fail.Child.Path + " " + exception != null ? exception.Message : "no exception object" );
+            Context.Parent.Tell( fail );
         }
 
         protected override void PreRestart( Exception reason, object message )

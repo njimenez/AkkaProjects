@@ -46,7 +46,9 @@ namespace WinTail.Actors
             { get; private set; }
         }
 
-        public class FileDeleted {}
+        public class FileDeleted
+        {
+        }
 
 
         /// <summary>
@@ -135,14 +137,7 @@ namespace WinTail.Actors
         }
         private void Handle( TailActor.LineRead msg )
         {
-            if ( String.IsNullOrEmpty( msg.Line ) )
-            {
-                _vm.Lines.OnNext( "null line" );
-            }
-            else
-            {
-                _vm.Lines.OnNext( msg.Line );
-            }
+            _vm.Lines.OnNext( msg.Line );
         }
         private void Handle( TailActor.FileError msg )
         {

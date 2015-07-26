@@ -48,8 +48,7 @@
                 Grid.Column="0"
                 Margin="5">
             <!-- http://wpftutorial.net/DataGrid.html -->
-            <DataGrid 
-                      AutoGenerateColumns="False"
+            <DataGrid AutoGenerateColumns="False"
                       ItemsSource="{Binding Items}">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Directory"
@@ -58,7 +57,7 @@
                                         Binding="{Binding Path=FileName}"></DataGridTextColumn>
                     <DataGridTextColumn Header="Words Count"
                                         Binding="{Binding Path=TotalWords, StringFormat={}{0:N0}}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Liness Count"
+                    <DataGridTextColumn Header="Lines Count"
                                         Binding="{Binding Path=TotalLines, StringFormat={}{0:N0}}"></DataGridTextColumn>
                     <DataGridTextColumn Header="Elapsed (ms)"
                                         Binding="{Binding Path=ElapsedMs}"></DataGridTextColumn>
@@ -74,6 +73,10 @@
                  Command="{Binding CountCommand}">
 
         </Button>
+        <CheckBox Grid.Row="1"
+                  Grid.Column="1"
+                  IsChecked="{Binding Crawling}"
+                  Content="{Binding Crawling, Mode=TwoWay}"></CheckBox>
 
         <StatusBar Grid.Row="3"
                    Grid.Column="0"

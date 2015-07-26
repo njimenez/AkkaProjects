@@ -38,14 +38,24 @@ namespace WinTail.ViewModels
             // this is how we can update the viewmodel 
             // from the actor. 
             Lines = new Subject<String>();
-            Lines.ObserveOnDispatcher().Subscribe( item => { Items.Add( item ); SelectedLine = Items.Count - 1; } );
+            Lines.ObserveOnDispatcher().Subscribe( item =>
+            {
+                Items.Add( item );
+
+                if ( Items.Count > 1500 )
+                {
+                    Items.RemoveAt( 0 );
+                }
+
+                SelectedLine = Items.Count - 1;
+
+            } );
         }
 
         public ReactiveList<String> Items
         { get; set; }
         public Subject<String> Lines
         { get; }
-
         public string Filename
         {
             get { return m_Filename; }
