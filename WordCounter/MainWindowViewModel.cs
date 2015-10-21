@@ -14,12 +14,14 @@ namespace WordCounter
         private string m_Extension = String.Empty;
         private string m_Folders = String.Empty;
         private string m_Status = String.Empty;
+        private StatsWindow statsWindow;
         private readonly IActorRef m_vmActor;
 
         public MainWindowViewModel()
         {
             Extension = "*.txt";
-            Folders = @"c:\Users\njimenez\Documents\Projects\CSharp\Games\Poker";
+            // Folders = @"c:\Users\njimenez\Documents\Projects\CSharp\Games\Poker";
+            Folders = @"d:\downloads";
             Items = new ReactiveList<ResultItem>();
 
             CountCommand = ReactiveCommand.Create();
@@ -33,18 +35,9 @@ namespace WordCounter
             m_vmActor = AkkaSystem.System.ActorOf( WordCounterSupervisor.GetProps( this ), ActorPaths.WordCounterSupervisorActor.Name );
         }
 
-        public ReactiveList<ResultItem> Items
-        {
-            get; set;
-        }
-        public Subject<ResultItem> AddItem
-        {
-            get; set;
-        }
-        public ReactiveCommand<object> CountCommand
-        {
-            get; private set;
-        }
+        public ReactiveList<ResultItem> Items { get; set; }
+        public Subject<ResultItem> AddItem { get; set; }
+        public ReactiveCommand<object> CountCommand { get; private set; }
 
         public string Folders
         {
@@ -104,12 +97,15 @@ namespace WordCounter
             CreateStatsWindow();
             Crawling = true;
             Items.Clear();
-           m_vmActor.Tell( new StartSearch( Folders, Extension ) );
+            m_vmActor.Tell( new StartSearch( Folders, Extension ) );
         }
         private void CreateStatsWindow()
         {
-            var window = new StatsWindow();
-            window.Show();
+            if ( statsWindow == null )
+            {
+                statsWindow = new StatsWindow();
+                statsWindow.Show();
+            }
         }
     }
 }
