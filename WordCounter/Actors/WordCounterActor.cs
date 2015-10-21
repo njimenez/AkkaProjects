@@ -1,5 +1,6 @@
 using Akka.Actor;
 using Akka.Routing;
+using AkkaStats.Actors;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -7,12 +8,12 @@ using WordCounter.Messages;
 
 namespace WordCounter.Actors
 {
-    public class WordCounterActor : ReceiveActor
+    public class WordCounterActor : BaseMonitoringActor
     {
         private string fileName;
         private int lineCount = 0;
         private int linesProcessed = 0;
-        private Stopwatch m_sw;
+        private readonly Stopwatch m_sw;
         private int result = 0;
 
         public static Props GetProps()
@@ -25,7 +26,6 @@ namespace WordCounter.Actors
         /// </summary>
         public WordCounterActor()
         {
-            //m_Sender = sender;
             fileName = String.Empty;
             m_sw = new Stopwatch();
             Ready();
@@ -40,6 +40,8 @@ namespace WordCounter.Actors
         }
         public void Handle( FileToProcess message )
         {
+            IncrementMessagesReceived();
+
             lineCount = 0;
             linesProcessed = 0;
             result = 0;
@@ -71,6 +73,8 @@ namespace WordCounter.Actors
 
         public void Handle( WordCount message )
         {
+            IncrementMessagesReceived();
+
             // aggregate the results
             result += message.WordsInLine;
             // update lines processed
@@ -87,6 +91,8 @@ namespace WordCounter.Actors
 
         public void Handle( FailureMessage fail )
         {
+            IncrementMessagesReceived();
+
             Context.Parent.Tell( fail );
         }
 

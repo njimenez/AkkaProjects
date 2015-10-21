@@ -14,12 +14,12 @@ namespace WordCounter
         private string m_Extension = String.Empty;
         private string m_Folders = String.Empty;
         private string m_Status = String.Empty;
-        private IActorRef m_vmActor;
+        private readonly IActorRef m_vmActor;
 
         public MainWindowViewModel()
         {
             Extension = "*.txt";
-            Folders = @"c:\";
+            Folders = @"c:\Users\njimenez\Documents\Projects\CSharp\Games\Poker";
             Items = new ReactiveList<ResultItem>();
 
             CountCommand = ReactiveCommand.Create();
@@ -30,14 +30,28 @@ namespace WordCounter
             AddItem = new Subject<ResultItem>();
             AddItem.ObserveOnDispatcher().Subscribe( item => Items.Add( item ) );
 
-            m_vmActor = App.WordCounterSystem.ActorOf( WordCounterSupervisor.GetProps( this ), ActorPaths.WordCounterSupervisorActor.Name );
+            m_vmActor = AkkaSystem.System.ActorOf( WordCounterSupervisor.GetProps( this ), ActorPaths.WordCounterSupervisorActor.Name );
         }
 
         public ReactiveList<ResultItem> Items
-        { get; set; }
+        {
+            get; set;
+        }
+        public Subject<ResultItem> AddItem
+        {
+            get; set;
+        }
+        public ReactiveCommand<object> CountCommand
+        {
+            get; private set;
+        }
+
         public string Folders
         {
-            get { return m_Folders; }
+            get
+            {
+                return m_Folders;
+            }
             set
             {
                 this.RaiseAndSetIfChanged( ref m_Folders, value );
@@ -45,7 +59,10 @@ namespace WordCounter
         }
         public string Extension
         {
-            get { return m_Extension; }
+            get
+            {
+                return m_Extension;
+            }
             set
             {
                 this.RaiseAndSetIfChanged( ref m_Extension, value );
@@ -53,7 +70,10 @@ namespace WordCounter
         }
         public string Status
         {
-            get { return m_Status; }
+            get
+            {
+                return m_Status;
+            }
             set
             {
                 this.RaiseAndSetIfChanged( ref m_Status, value );
@@ -61,17 +81,15 @@ namespace WordCounter
         }
         public bool Crawling
         {
-            get { return m_Crawling; }
+            get
+            {
+                return m_Crawling;
+            }
             set
             {
                 this.RaiseAndSetIfChanged( ref m_Crawling, value );
             }
         }
-
-        public Subject<ResultItem> AddItem
-        { get; set; }
-        public ReactiveCommand<object> CountCommand
-        { get; private set; }
 
         public void Done()
         {
@@ -83,9 +101,15 @@ namespace WordCounter
             if ( Crawling )
                 return;
 
+            CreateStatsWindow();
             Crawling = true;
             Items.Clear();
-            m_vmActor.Tell( new StartSearch( Folders, Extension ) );
+           m_vmActor.Tell( new StartSearch( Folders, Extension ) );
+        }
+        private void CreateStatsWindow()
+        {
+            var window = new StatsWindow();
+            window.Show();
         }
     }
 }

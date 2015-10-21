@@ -10,7 +10,6 @@ namespace WinTail.Actors
     {
         private IActorRef fileEnumerator;
         private IActorRef validator;
-        private IActorRef tailCoordinator;
 
         private readonly MainWindowViewModel m_vm;
 
@@ -27,7 +26,6 @@ namespace WinTail.Actors
             m_vm = vm;
             validator = Context.ActorOf( FileValidatorActor.GetProps(), "filevalidator" );
             fileEnumerator = Context.ActorOf( FileEnumeratorActor.GetProps(), "file-enumerator" );
-            tailCoordinator = Context.ActorOf( TailCoordinatorActor.GetProps(), "tailcoordinator" );
             Ready();
         }
 

@@ -4,7 +4,7 @@ using WordCounter.Messages;
 
 namespace WordCounter.Actors
 {
-    public class StringCounterActor : ReceiveActor
+    public class StringCounterActor : BaseMonitoringActor
     {
         public static Props GetProps()
         {
@@ -25,6 +25,7 @@ namespace WordCounter.Actors
         }
         public void Handle( ProcessLine message )
         {
+            IncrementMessagesReceived();
             var wordsInLine = message.LineToProcess.Split( ' ' ).Length;
             Sender.Tell( new WordCount( wordsInLine ) );
         }

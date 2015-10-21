@@ -5,7 +5,7 @@ using WordCounter.Messages;
 
 namespace WordCounter.Actors
 {
-    public class FileValidatorActor : ReceiveActor
+    public class FileValidatorActor : BaseMonitoringActor
     {
         public static Props GetProps()
         {
@@ -17,6 +17,7 @@ namespace WordCounter.Actors
         }
         private void Handle( ValidateArgs msg )
         {
+            IncrementMessagesReceived();
             if ( String.IsNullOrEmpty( msg.Folders ) )
             {
                 Sender.Tell( new InvalidArgs( "Folders argument is empty." ) );

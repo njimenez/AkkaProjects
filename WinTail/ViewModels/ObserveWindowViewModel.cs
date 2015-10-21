@@ -55,7 +55,7 @@ namespace WinTail.ViewModels
         public ReactiveList<String> Items
         { get; set; }
         public Subject<String> Lines
-        { get; }
+        { get; set; }
         public string Filename
         {
             get { return m_Filename; }

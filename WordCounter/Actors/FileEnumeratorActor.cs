@@ -19,10 +19,10 @@ namespace WordCounter.Actors
      * 
      */
 
-    public class FileEnumeratorActor : ReceiveActor
+    public class FileEnumeratorActor : BaseMonitoringActor
     {
         private int fileCount = 0;
-        private Stopwatch m_sw = new Stopwatch();
+        private readonly Stopwatch m_sw = new Stopwatch();
         public static Props GetProps()
         {
             return Props.Create<FileEnumeratorActor>();
@@ -43,6 +43,7 @@ namespace WordCounter.Actors
 
         private void Handle( DirectoryToSearchMessage message )
         {
+            IncrementMessagesReceived();
             fileCount = 0;
             m_sw.Start();
             EnumerateFiles( Sender, message.Directory, message.SearchPattern );

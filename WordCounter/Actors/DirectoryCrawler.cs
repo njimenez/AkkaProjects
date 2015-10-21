@@ -6,23 +6,27 @@ using WordCounter.Messages;
 
 namespace WordCounter.Actors
 {
-    public class DirectoryCrawler : ReceiveActor
+    public class DirectoryCrawler : BaseMonitoringActor
     {
-        private IActorRef EnumeratorActor;
+        private readonly IActorRef EnumeratorActor;
+
         private bool CrawlingDone = false;
         private int fileno = 0;
         private int fileProcessed = 0;
         private int filesCrawled;
-        private Stopwatch m_sw = new Stopwatch();
+        private readonly Stopwatch m_sw = new Stopwatch();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DirectoryCrawler"/> class.
         /// </summary>
         public DirectoryCrawler()
         {
-
             EnumeratorActor = Context.ActorOf( FileEnumeratorActor.GetProps() );
+            Ready();
+        }
 
+        private void Ready()
+        {
             Receive<DirectoryToSearchMessage>( msg => Handle( msg ) );
             Receive<FileInfo>( msg => Handle( msg ) );
             Receive<CompletedFile>( msg => Handle( msg ) );
@@ -32,6 +36,7 @@ namespace WordCounter.Actors
 
         public void Handle( DirectoryToSearchMessage message )
         {
+            IncrementMessagesReceived();
             fileno = 0;
             fileProcessed = 0;
             filesCrawled = 0;
@@ -43,6 +48,7 @@ namespace WordCounter.Actors
 
         private void Handle( FileInfo msg )
         {
+            IncrementMessagesReceived();
             var counterActor = Context.ActorOf( WordCounterActor.GetProps() );
             counterActor.Tell( new FileToProcess( msg.FullName, fileno ) );
             fileno++;
@@ -51,6 +57,7 @@ namespace WordCounter.Actors
 
         public void Handle( CompletedFile message )
         {
+            IncrementMessagesReceived();
             fileProcessed++;
             Context.Parent.Tell( message );
             CrawlingFinished();
@@ -58,14 +65,15 @@ namespace WordCounter.Actors
 
         private void Handle( Done msg )
         {
+            IncrementMessagesReceived();
             filesCrawled = msg.Count;
             CrawlingDone = true;
             CrawlingFinished();
         }
 
-
         public void Handle( FailureMessage fail )
         {
+            IncrementMessagesReceived();
             var exception = fail.Cause;
             if ( exception is AggregateException )
             {
