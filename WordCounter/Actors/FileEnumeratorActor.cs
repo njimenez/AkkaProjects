@@ -35,12 +35,10 @@ namespace WordCounter.Actors
         {
             Ready();
         }
-
         private void Ready()
         {
             Receive<DirectoryToSearchMessage>( msg => Handle( msg ) );
         }
-
         private void Handle( DirectoryToSearchMessage message )
         {
             IncrementMessagesReceived();
@@ -52,7 +50,6 @@ namespace WordCounter.Actors
             m_sw.Reset();
             Context.Stop( Self );
         }
-        
         private void EnumerateFiles( IActorRef sender, string directory, String searchPattern )
         {
             try
@@ -64,14 +61,12 @@ namespace WordCounter.Actors
                 }
 
                 EnumerateDirectories( sender, directory, searchPattern );
-
             }
             catch ( Exception )
             {
                 sender.Tell( new StatusMessage( string.Format( "Error getting file in directory : [{0}]", directory ) ) );
             }
         }
-
         private void EnumerateDirectories( IActorRef sender, string staringdir, String searchPattern )
         {
             foreach ( var dir in Directory.GetDirectories( staringdir, "*.*", SearchOption.TopDirectoryOnly ) )
@@ -79,6 +74,5 @@ namespace WordCounter.Actors
                 EnumerateFiles( sender, dir, searchPattern );
             }
         }
-
     }
 }

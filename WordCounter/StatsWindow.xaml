@@ -44,7 +44,7 @@
                 <DataGridTextColumn Header="Metric Name"
                                     Binding="{Binding Path=MetricName}"></DataGridTextColumn>
                 <DataGridTextColumn Header="Value"
-                                    Binding="{Binding Path=Value}"></DataGridTextColumn>
+                                    Binding="{Binding Path=Value, StringFormat={}{0:N0}}"></DataGridTextColumn>
             </DataGrid.Columns>
 
         </DataGrid>
