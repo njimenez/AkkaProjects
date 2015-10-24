@@ -1,15 +1,12 @@
 using Akka.Actor;
 using System;
 using System.IO;
-using Akka.Monitoring;
 using WordCounter.Messages;
 
 namespace WordCounter.Actors
 {
     public class WordCounterSupervisor : BaseMonitoringActor
     {
-        private readonly IActorRef crawler;
-        private readonly IActorRef validator;
         private readonly MainWindowViewModel m_vm;
 
         public static Props GetProps( MainWindowViewModel vm )
@@ -23,8 +20,6 @@ namespace WordCounter.Actors
         public WordCounterSupervisor( MainWindowViewModel vm )
         {
             m_vm = vm;
-            validator = Context.ActorOf( FileValidatorActor.GetProps(), ActorPaths.FileValidator.Name );
-            crawler = Context.ActorOf<DirectoryCrawler>( "directoryCrawler" );
             Ready();
         }
         private void Ready()
@@ -48,12 +43,19 @@ namespace WordCounter.Actors
         private void Handle( StartSearch msg )
         {
             IncrementMessagesReceived();
+            var validator = Context.ActorOf( FileValidatorActor.GetProps(), ActorPaths.FileValidator.Name );
             validator.Tell( new ValidateArgs( msg.Folders, msg.Extension ) );
         }
         private void Handle( ValidateArgs msg )
         {
             IncrementMessagesReceived();
-            crawler.Tell( new DirectoryToSearchMessage( msg.Folders, msg.Extension ) );
+            var child = Context.Child( "directoryCrawler" );
+            if ( child.Equals( ActorRefs.Nobody ) )
+            {
+                child = Context.ActorOf<DirectoryCrawler>( "directoryCrawler" );
+            }
+
+            child.Tell( new DirectoryToSearchMessage( msg.Folders, msg.Extension ) );
         }
         private void Handle( InvalidArgs msg )
         {
@@ -109,6 +111,5 @@ namespace WordCounter.Actors
             }
             return result;
         }
-
     }
 }

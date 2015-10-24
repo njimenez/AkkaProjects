@@ -20,8 +20,7 @@ namespace WordCounter.Actors
             IncrementMessagesReceived();
             if ( String.IsNullOrEmpty( msg.Folders ) )
             {
-                Sender.Tell( new InvalidArgs( "Folders argument is empty." ) );
-                
+                Sender.Tell( new InvalidArgs( "Folders argument is empty." ) );                
             }
             else
             if ( Directory.Exists( msg.Folders ) )
@@ -37,6 +36,8 @@ namespace WordCounter.Actors
             {
                 Sender.Tell( new InvalidArgs( String.Format( "Invalid Folder [{0}] [{1}]", msg.Folders, msg.Extension ) ) );
             }
+
+            Context.Stop( Self );
         }
     }
 }

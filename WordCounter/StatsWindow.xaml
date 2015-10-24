@@ -3,41 +3,50 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WordCounter" 
+        xmlns:local="clr-namespace:WordCounter"
         mc:Ignorable="d"
-        Title="StatsWindow" 
+        Title="WPF Akka Monitoring"
         Height="300"
-        Width="300" Loaded="Window_Loaded">
+        Width="400">
 
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-
-        <StackPanel Grid.Row="0" Orientation="Vertical">
-            <StackPanel Orientation="Vertical" Background="Azure">
-                <TextBlock Text="metric.number.1"></TextBlock>
-                <TextBlock Text="1,966" FontWeight="DemiBold"></TextBlock>
-            </StackPanel>
-        </StackPanel>
-
-        <ListBox Grid.Row="1" ItemsSource="{Binding Items}" HorizontalContentAlignment="Stretch">
-            <ListBox.ItemTemplate>
+        <!--<ItemsControl Grid.Row="0"
+                      ItemsSource="{Binding Items}">
+            <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Vertical" Background="Azure">
-                        <TextBlock Text="{Binding MetricName}"></TextBlock>
-                        <TextBlock Text="{Binding Value}" FontWeight="DemiBold"></TextBlock>
-                    </StackPanel>
+                    <Button>
+                        <StackPanel Orientation="Vertical"
+                                    Background="Azure">
+                            <TextBlock Text="{Binding MetricName}" FontSize="12"></TextBlock>
+                            <TextBlock Text="{Binding Value}"
+                                       FontWeight="DemiBold" FontSize="20"></TextBlock>
+                        </StackPanel>
+                    </Button>
                 </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel ItemWidth="400"></WrapPanel>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>-->
+        <DataGrid AutoGenerateColumns="False"
+                  AlternatingRowBackground="AliceBlue"
+                  HorizontalContentAlignment="Stretch"
+                  ItemsSource="{Binding Items}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Metric Name"
+                                    Binding="{Binding Path=MetricName}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Value"
+                                    Binding="{Binding Path=Value}"></DataGridTextColumn>
+            </DataGrid.Columns>
 
+        </DataGrid>
     </Grid>
 </Window>

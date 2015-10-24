@@ -88,7 +88,10 @@ namespace WordCounter
         {
             Crawling = false;
         }
-
+        public void Closing()
+        {
+            statsWindow.Close();
+        }
         private void DoCount()
         {
             if ( Crawling )

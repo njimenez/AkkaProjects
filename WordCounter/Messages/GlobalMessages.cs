@@ -13,23 +13,18 @@ namespace WordCounter.Messages
             Extension = extension;
             Folders = folders;
         }
-        public String Folders
-        { get; private set; }
-        public String Extension
-        { get; private set; }
+        public String Folders { get; private set; }
+        public String Extension { get; private set; }
     }
     public class ValidateArgs
     {
-
         public ValidateArgs( String folders, String extension )
         {
             Extension = extension;
             Folders = folders;
         }
-        public String Folders
-        { get; private set; }
-        public String Extension
-        { get; private set; }
+        public String Folders { get; private set; }
+        public String Extension { get; private set; }
     }
     public class InvalidArgs
     {
@@ -37,8 +32,7 @@ namespace WordCounter.Messages
         {
             ErrorMessage = errorMessage;
         }
-        public String ErrorMessage
-        { get; private set; }
+        public String ErrorMessage { get; private set; }
     }
     public class ValidArgs
     {
@@ -46,30 +40,27 @@ namespace WordCounter.Messages
         {
             Fullpath = fullpath;
         }
-        public String Fullpath
-        { get; private set; }
+        public String Fullpath { get; private set; }
     }
     public class ProcessLine
     {
-        public ProcessLine( string line )
+        public ProcessLine( string line, int lineNumber )
         {
+            LineNumber = lineNumber;
             LineToProcess = line;
         }
-        public string LineToProcess
-        { get; private set; }
+        public string LineToProcess { get; private set; }
+        public int LineNumber { get; private set; }
     }
-     public class DirectoryToSearchMessage
+    public class DirectoryToSearchMessage
     {
         public DirectoryToSearchMessage( string directory, string searchPattern )
         {
             Directory = directory;
             SearchPattern = searchPattern;
         }
-        public string SearchPattern
-        { get; private set; }
-        public string Directory
-        { get; private set; }
-
+        public string SearchPattern { get; private set; }
+        public string Directory { get; private set; }
     }
     public class FileToProcess
     {
@@ -79,10 +70,8 @@ namespace WordCounter.Messages
             FileName = fileName;
         }
 
-        public string FileName
-        { get; private set; }
-        public int Fileno
-        { get; private set; }
+        public string FileName { get; private set; }
+        public int Fileno { get; private set; }
     }
     public class FailureMessage
     {
@@ -92,10 +81,8 @@ namespace WordCounter.Messages
             Child = actor;
         }
 
-        public Exception Cause
-        { get; private set; }
-        public IActorRef Child
-        { get; private set; }
+        public Exception Cause { get; private set; }
+        public IActorRef Child { get; private set; }
     }
     public class WordCount
     {
@@ -103,8 +90,7 @@ namespace WordCounter.Messages
         {
             WordsInLine = wordsInLine;
         }
-        public int WordsInLine
-        { get; private set; }
+        public int WordsInLine { get; private set; }
     }
     public class CompletedFile
     {
@@ -115,24 +101,18 @@ namespace WordCounter.Messages
             FileName = fileName;
             WordsInFile = wordsInFile;
         }
-        public int WordsInFile
-        { get; private set; }
-        public string FileName
-        { get; private set; }
-        public long ElapsedMilliseconds
-        { get; private set; }
-        public int LinesInFile
-        { get; private set; }
+        public int WordsInFile { get; private set; }
+        public string FileName { get; private set; }
+        public long ElapsedMilliseconds { get; private set; }
+        public int LinesInFile { get; private set; }
     }
     public class StatusMessage
     {
-
         public StatusMessage( String message )
         {
             Message = message;
         }
-        public String Message
-        { get; private set; }
+        public String Message { get; private set; }
     }
     public class Done
     {
@@ -140,6 +120,20 @@ namespace WordCounter.Messages
         /// Initializes a new instance of the Done class.
         /// </summary>
         public Done( int count, TimeSpan elapsedMs )
+        {
+            ElapsedTime = elapsedMs;
+            Count = count;
+        }
+        public int Count { get; private set; }
+        public TimeSpan ElapsedTime { get; private set; }
+    }
+
+    public class DoneEnumeratingFiles 
+    {
+        /// <summary>
+        /// Initializes a new instance of the DoneEnumeratingFiles class.
+        /// </summary>
+        public DoneEnumeratingFiles( int count, TimeSpan elapsedMs )
         {
             ElapsedTime = elapsedMs;
             Count = count;

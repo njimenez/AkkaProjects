@@ -23,7 +23,6 @@ namespace WordCounter
         /// Reference to the <see cref="ActorSystem"/>
         /// </summary>
         public static ActorSystem System;
-        public static IActorRef Publisher;
 
         public static void Start( string systemName )
         {
@@ -33,7 +32,6 @@ namespace WordCounter
             System = ActorSystem.Create( systemName );
             var monitor = new AkkaMonitoringPublisher( System );
             ActorMonitoringExtension.RegisterMonitor( System, monitor );
-            Publisher = monitor.Publisher;
         }
 
 

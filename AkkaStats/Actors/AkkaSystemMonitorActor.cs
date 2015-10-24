@@ -7,6 +7,8 @@ namespace AkkaStats.Actors
 {
     public class AkkaSystemMonitorActor : ReceiveActor
     {
+        private ICancelable m_CancelToken;
+        private bool m_ScheduleOn;
         private readonly HashSet<IActorRef> subscribers;
 
         public static Props GetProps()
@@ -29,20 +31,22 @@ namespace AkkaStats.Actors
             subscribers = new HashSet<IActorRef>();
             Ready();
         }
-
+        /// <summary>
+        /// Prepare to receive 
+        /// </summary>
         private void Ready()
         {
             Receive<UpdateCounterMessage>( msg => Handle( msg ) );
             Receive<UpdateGaugeMessage>( msg => Handle( msg ) );
             Receive<UpdateTimingMessage>( msg => Handle( msg ) );
             Receive<SubscribeMonitorMessage>( msg => Handle( msg ) );
+            Receive<GetValues>( msg => Handle( msg ) );
             Receive<PublishMetrics>( msg => Handle( msg ) );
         }
         private void Handle( UpdateCounterMessage msg )
         {
             var child = GetChild( msg.MetricName );
             child.Tell( msg );
-            Self.Tell( new PublishMetrics( msg.MetricName, msg.Delta ) );
         }
         private void Handle( UpdateGaugeMessage msg )
         {
@@ -54,8 +58,21 @@ namespace AkkaStats.Actors
             var child = GetChild( msg.MetricName );
             child.Tell( msg );
         }
+        private void Handle( GetValues msg )
+        {
+            foreach ( var child in Context.GetChildren() )
+            {
+                child.Tell( msg );
+            }
+        }
         private void Handle( PublishMetrics msg )
         {
+            // stop scheduler since we are going to publish
+            if ( m_CancelToken != null )
+            {
+                m_CancelToken.Cancel();
+                m_CancelToken = null;
+            }
             foreach ( var item in subscribers )
             {
                 item.Tell( msg );
@@ -65,6 +82,16 @@ namespace AkkaStats.Actors
         {
             subscribers.Add( msg.Observer );
         }
+        private void SetupSchedulePublishing()
+        {
+            if ( m_CancelToken == null && subscribers.Count > 0 )
+            {
+                m_CancelToken = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable( TimeSpan.FromSeconds( 1 ),
+                TimeSpan.FromSeconds( 3 ),
+                Self, new GetValues(), Self );
+                m_ScheduleOn = true;
+            }
+        }
         /// <summary>
         /// Given a metric name; check to see if we already have an actor handling the metric
         /// otherwise create one.
@@ -73,6 +100,7 @@ namespace AkkaStats.Actors
         /// <returns></returns>
         private IActorRef GetChild( string metricName )
         {
+            SetupSchedulePublishing();
             var child = Context.Child( metricName );
             if ( child.Equals( ActorRefs.Nobody ) )
             {

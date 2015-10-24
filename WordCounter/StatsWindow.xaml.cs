@@ -20,15 +20,11 @@ namespace WordCounter
             InitializeComponent();
             DataContext = new StatsWindowViewModel();
         }
-
-        private void Window_Loaded( object sender, RoutedEventArgs e )
-        {
-            ( DataContext as StatsWindowViewModel ).Initialize();
-        }
     }
 
     public class StatsWindowViewModel : ReactiveObject
     {
+        private ActorSelection m_publisher;
         private readonly IActorRef m_vmActor;
 
         /// <summary>
@@ -40,34 +36,46 @@ namespace WordCounter
 
             // this is how we can update the viewmodel 
             // from the actor. 
-            AddItem = new Subject<StatViewModel>();
-            AddItem.ObserveOnDispatcher().Subscribe( item => Items.Add( item ) );
+            AddItem = new Subject<PublishMetrics>();
+            AddItem.ObserveOnDispatcher().Subscribe( item => HandleNewItemOnList( item ) );
 
             m_vmActor = AkkaSystem.System.ActorOf( StatObserver.GetProps( this ), "stat-window" );
-        }
-        public void Initialize()
-        {
-            var publisher = AkkaSystem.System.ActorSelection( "/user/" + AkkaSystemMonitorActor.Name );
-            // TODO: what to do if publisher not found.
-            //var publisher = AkkaSystem.Publisher;
-            publisher.Tell( new SubscribeMonitorMessage( m_vmActor ) );
-            //   publisher.Tell( new PublishMetrics( "nelson", 10 ) );
-        }
+            Publisher = AkkaSystem.System.ActorSelection( "/user/" + AkkaSystemMonitorActor.Name );
 
-        public ReactiveList<StatViewModel> Items
-        {
-            get; set;
+            // TODO: what to do if publisher not found.
+            Publisher.Tell( new SubscribeMonitorMessage( m_vmActor ) );
         }
-        public Subject<StatViewModel> AddItem
+        public ReactiveList<StatViewModel> Items { get; set; }
+        public Subject<PublishMetrics> AddItem { get; set; }
+        private void HandleNewItemOnList( PublishMetrics msg )
         {
-            get; set;
+            var found = Items.FirstOrDefault( x => x.MetricName == msg.MetricName );
+            if ( found == null )
+            {
+                Items.Add( new StatViewModel() { MetricName = msg.MetricName, Value = msg.Value } );
+            }
+            else
+            {
+                found.Value = msg.Value;
+                msg = null;
+            }
+        }
+        public ActorSelection Publisher
+        {
+            get
+            {
+                return m_publisher;
+            }
+            set
+            {
+                m_publisher = value;
+            }
         }
     }
 
     public class StatObserver : ReceiveActor
     {
         private readonly StatsWindowViewModel m_Vm;
-
         public static Props GetProps( StatsWindowViewModel vm )
         {
             return Props.Create( () => new StatObserver( vm ) );
@@ -82,15 +90,7 @@ namespace WordCounter
         }
         private void Handle( PublishMetrics msg )
         {
-            var item = m_Vm.Items.FirstOrDefault( x => x.MetricName == msg.MetricName );
-            if ( item == null )
-            {
-                m_Vm.AddItem.OnNext( new StatViewModel() { MetricName = msg.MetricName, Value = msg.Value } );
-            }
-            else
-            {
-                item.Value = msg.Value;
-            }
+            m_Vm.AddItem.OnNext( msg );
         }
     }
 
@@ -123,7 +123,5 @@ namespace WordCounter
                 this.RaiseAndSetIfChanged( ref m_Value, value );
             }
         }
-
-
     }
 }

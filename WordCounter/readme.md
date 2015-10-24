@@ -105,7 +105,6 @@ It handles the following messages:
 * **WordCount**
   * Received from the `StringCounterActor` for every line containing the number of words in the line. It aggregates     the count until all the lines have been processed.
   * When the full file is read then it sends its parent a `CompletedFile` message with the statistics gathered.
-  * Then it stops itself.
 
 * **FailureMessage**
   * Received from the `StringCounterActor` if there is a failure counting the line.

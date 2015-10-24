@@ -8,8 +8,7 @@ using System.Threading.Tasks;
 namespace AkkaStats.Messages
 {
     public class SubscribeMonitorMessage
-    {
-        
+    {       
         public SubscribeMonitorMessage(IActorRef observer)
         {
             Observer = observer;
@@ -18,6 +17,9 @@ namespace AkkaStats.Messages
         {
             get; private set;
         }
+    }
+    public class GetValues
+    {
     }
     public class PublishMetrics
     {

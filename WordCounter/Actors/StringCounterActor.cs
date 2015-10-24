@@ -1,6 +1,7 @@
 using Akka.Actor;
 using System;
 using WordCounter.Messages;
+using Akka.Monitoring;
 
 namespace WordCounter.Actors
 {
@@ -27,7 +28,7 @@ namespace WordCounter.Actors
         {
             IncrementMessagesReceived();
             var wordsInLine = message.LineToProcess.Split( ' ' ).Length;
-            Sender.Tell( new WordCount( wordsInLine ) );
+            Sender.Tell( new WordCount( wordsInLine ) );            
         }
 
         protected override void PreRestart( Exception reason, object message )

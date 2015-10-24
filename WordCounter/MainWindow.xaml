@@ -10,7 +10,8 @@
                       Icon="./counter.png"
                       Height="350"
                       Width="525"
-                      GlowBrush="{DynamicResource AccentColorBrush}">
+                      GlowBrush="{DynamicResource AccentColorBrush}"
+                      Closing="MetroWindow_Closing">
 
     <Grid Margin="5">
         <Grid.ColumnDefinitions>

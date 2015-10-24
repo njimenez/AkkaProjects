@@ -8,8 +8,6 @@ namespace WordCounter.Actors
 {
     public class DirectoryCrawler : BaseMonitoringActor
     {
-        private readonly IActorRef EnumeratorActor;
-
         private bool CrawlingDone = false;
         private int fileno = 0;
         private int fileProcessed = 0;
@@ -21,7 +19,6 @@ namespace WordCounter.Actors
         /// </summary>
         public DirectoryCrawler()
         {
-            EnumeratorActor = Context.ActorOf( FileEnumeratorActor.GetProps() );
             Ready();
         }
 
@@ -30,7 +27,7 @@ namespace WordCounter.Actors
             Receive<DirectoryToSearchMessage>( msg => Handle( msg ) );
             Receive<FileInfo>( msg => Handle( msg ) );
             Receive<CompletedFile>( msg => Handle( msg ) );
-            Receive<Done>( msg => Handle( msg ) );
+            Receive<DoneEnumeratingFiles>( msg => DoneEnumerating( msg ) );
             Receive<FailureMessage>( msg => Handle( msg ) );
         }
 
@@ -43,15 +40,16 @@ namespace WordCounter.Actors
             CrawlingDone = false;
 
             m_sw.Start();
+            var EnumeratorActor = Context.ActorOf( FileEnumeratorActor.GetProps() );
             EnumeratorActor.Tell( message );
         }
 
         private void Handle( FileInfo msg )
         {
             IncrementMessagesReceived();
+            fileno++;
             var counterActor = Context.ActorOf( WordCounterActor.GetProps() );
             counterActor.Tell( new FileToProcess( msg.FullName, fileno ) );
-            fileno++;
             Context.Parent.Tell( new StatusMessage( "Processing file " + msg.FullName ) );
         }
 
@@ -60,17 +58,14 @@ namespace WordCounter.Actors
             IncrementMessagesReceived();
             fileProcessed++;
             Context.Parent.Tell( message );
-            CrawlingFinished();
+            CrawlingFinished();            
         }
-
-        private void Handle( Done msg )
+        private void DoneEnumerating( DoneEnumeratingFiles msg )
         {
             IncrementMessagesReceived();
             filesCrawled = msg.Count;
-            CrawlingDone = true;
-            CrawlingFinished();
+            CrawlingDone = true;            
         }
-
         public void Handle( FailureMessage fail )
         {
             IncrementMessagesReceived();
@@ -91,7 +86,13 @@ namespace WordCounter.Actors
                 m_sw.Stop();
                 Context.Parent.Tell( new Done( fileProcessed, m_sw.Elapsed ) );
                 m_sw.Reset();
+                Sender.Tell( PoisonPill.Instance );
             }
+        }
+
+        protected override void PreRestart( Exception reason, object message )
+        {
+            // preserve all children in the event of a restart
         }
     }
 }

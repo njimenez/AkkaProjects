@@ -48,8 +48,9 @@ namespace WordCounter.Actors
             m_sw.Start();
             EnumerateFiles( Sender, message.Directory, message.SearchPattern );
             m_sw.Stop();
-            Sender.Tell( new Done( fileCount, m_sw.Elapsed ) );
+            Sender.Tell( new DoneEnumeratingFiles( fileCount, m_sw.Elapsed ) );
             m_sw.Reset();
+            Context.Stop( Self );
         }
         
         private void EnumerateFiles( IActorRef sender, string directory, String searchPattern )
