@@ -16,7 +16,6 @@ namespace WordCounter
             AkkaSystem.Start( "word-counter" );
         }
     }
-
     public static class AkkaSystem
     {
         /// <summary>
