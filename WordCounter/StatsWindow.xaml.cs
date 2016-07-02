@@ -1,19 +1,18 @@
 ﻿using Akka.Actor;
-using AkkaStats.Actors;
 using AkkaStats.Messages;
 using System.Linq;
-using System.Windows;
 using ReactiveUI;
 using System;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using MahApps.Metro.Controls;
 
 namespace WordCounter
 {
     /// <summary>
     /// Interaction logic for StatsWindow.xaml
     /// </summary>
-    public partial class StatsWindow : Window
+    public partial class StatsWindow : MetroWindow
     {
         public StatsWindow()
         {
@@ -24,7 +23,7 @@ namespace WordCounter
 
     public class StatsWindowViewModel : ReactiveObject
     {
-        private ActorSelection m_publisher;
+        private IActorRef m_publisher;
         private readonly IActorRef m_vmActor;
 
         /// <summary>
@@ -40,7 +39,8 @@ namespace WordCounter
             AddItem.ObserveOnDispatcher().Subscribe( item => HandleNewItemOnList( item ) );
 
             m_vmActor = AkkaSystem.System.ActorOf( StatObserver.GetProps( this ), "stat-window" );
-            Publisher = AkkaSystem.System.ActorSelection( "/user/" + AkkaSystemMonitorActor.Name );
+            //Publisher = AkkaSystem.System.ActorSelection( "/user/" + AkkaSystemMonitorActor.Name );
+            Publisher = AkkaSystem.Publisher;
 
             // TODO: what to do if publisher not found.
             Publisher.Tell( new SubscribeMonitorMessage( m_vmActor ) );
@@ -60,7 +60,7 @@ namespace WordCounter
                 msg = null;
             }
         }
-        public ActorSelection Publisher
+        public IActorRef Publisher
         {
             get
             {
