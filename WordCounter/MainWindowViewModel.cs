@@ -15,16 +15,20 @@ namespace WordCounter
         private string m_Folders = String.Empty;
         private string m_Status = String.Empty;
         private StatsWindow statsWindow;
-        private readonly IActorRef m_vmActor;
+        private readonly IActorRef m_wordCounterSupervisor;
 
         public MainWindowViewModel()
         {
             Extension = "*.txt";
-            // Folders = @"c:\Users\njimenez\Documents\Projects\CSharp\Games\Poker";
             Folders = @"d:\downloads";
             Items = new ReactiveList<ResultItem>();
 
-            CountCommand = ReactiveCommand.Create();
+            // create the condition in which the count command is enabled.
+            var canCount = this.WhenAny( x => x.m_Crawling, x => !x.Value );
+
+            // create the command that will be executed when the 
+            // count button is clicked.
+            CountCommand = ReactiveCommand.Create(canCount);
             CountCommand.Subscribe( x => DoCount() );
 
             // this is how we can update the viewmodel 
@@ -32,7 +36,8 @@ namespace WordCounter
             AddItem = new Subject<ResultItem>();
             AddItem.ObserveOnDispatcher().Subscribe( item => Items.Add( item ) );
 
-            m_vmActor = AkkaSystem.System.ActorOf( WordCounterSupervisor.GetProps( this ), ActorPaths.WordCounterSupervisorActor.Name );
+            // create the word counter supervisor
+            m_wordCounterSupervisor = AkkaSystem.System.ActorOf( WordCounterSupervisor.GetProps( this ), ActorPaths.WordCounterSupervisorActor.Name );
         }
 
         public ReactiveList<ResultItem> Items { get; set; }
@@ -92,16 +97,24 @@ namespace WordCounter
         {
             statsWindow.Close();
         }
+
+        /// <summary>
+        /// Event method called when we press the count button on the Front End.
+        /// </summary>
         private void DoCount()
         {
+            // if we are crawling already
             if ( Crawling )
                 return;
 
             CreateStatsWindow();
             Crawling = true;
             Items.Clear();
-            m_vmActor.Tell( new StartSearch( Folders, Extension ) );
+            m_wordCounterSupervisor.Tell( new StartSearch( Folders, Extension ) );
         }
+        /// <summary>
+        /// Creates the statistics window
+        /// </summary>
         private void CreateStatsWindow()
         {
             if ( statsWindow == null )

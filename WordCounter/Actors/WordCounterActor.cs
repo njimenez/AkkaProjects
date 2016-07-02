@@ -51,8 +51,7 @@ namespace WordCounter.Actors
             result = 0;
             m_sw.Start();
             fileName = message.FileName;
-            router = Context.ActorOf( new RoundRobinPool(8).Props( StringCounterActor.GetProps() ), String.Format( "liner{0}", message.Fileno ) );
-            //var router = Context.ActorOf( StringCounterActor.GetProps(), String.Format( "liner{0}", message.Fileno ) );
+            router = Context.ActorOf( new RoundRobinPool( 8 ).Props( StringCounterActor.GetProps() ), String.Format( "liner{0}", message.Fileno ) );
             try
             {
                 foreach ( var line in File.ReadLines( fileName ) )
@@ -91,8 +90,8 @@ namespace WordCounter.Actors
             if ( linesProcessed >= lineCount )
             {
                 m_sw.Stop();
-                Context.Parent.Tell( new CompletedFile( fileName, result, lineCount, m_sw.ElapsedMilliseconds ) );   
-                Self.Tell( PoisonPill.Instance );             
+                Context.Parent.Tell( new CompletedFile( fileName, result, lineCount, m_sw.ElapsedMilliseconds ) );
+                Context.Stop( Self );
             }
         }
         public void Handle( FailureMessage fail )

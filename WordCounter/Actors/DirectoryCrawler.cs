@@ -2,6 +2,7 @@ using Akka.Actor;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using WordCounter.Messages;
 
 namespace WordCounter.Actors
@@ -43,7 +44,10 @@ namespace WordCounter.Actors
             var EnumeratorActor = Context.ActorOf( FileEnumeratorActor.GetProps() );
             EnumeratorActor.Tell( message );
         }
-
+        /// <summary>
+        /// Message received from Enumerator Actor when a file is found that meets the search criteria.
+        /// </summary>
+        /// <param name="msg">FileInfo message; contains the file's full name to be processed</param>
         private void Handle( FileInfo msg )
         {
             IncrementMessagesReceived();
@@ -58,13 +62,13 @@ namespace WordCounter.Actors
             IncrementMessagesReceived();
             fileProcessed++;
             Context.Parent.Tell( message );
-            CrawlingFinished();            
+            CrawlingFinished();
         }
         private void DoneEnumerating( DoneEnumeratingFiles msg )
         {
             IncrementMessagesReceived();
             filesCrawled = msg.Count;
-            CrawlingDone = true;            
+            CrawlingDone = true;
         }
         public void Handle( FailureMessage fail )
         {
@@ -72,7 +76,7 @@ namespace WordCounter.Actors
             var exception = fail.Cause;
             if ( exception is AggregateException )
             {
-                var agg = ( AggregateException )exception;
+                var agg = (AggregateException)exception;
                 exception = agg.InnerException;
                 agg.Handle( exception1 => true );
             }
@@ -89,7 +93,6 @@ namespace WordCounter.Actors
                 Sender.Tell( PoisonPill.Instance );
             }
         }
-
         protected override void PreRestart( Exception reason, object message )
         {
             // preserve all children in the event of a restart
