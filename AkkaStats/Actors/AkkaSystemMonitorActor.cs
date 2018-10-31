@@ -8,7 +8,7 @@ namespace AkkaStats.Actors
     public class AkkaSystemMonitorActor : ReceiveActor
     {
         private ICancelable m_CancelToken;
-        private bool m_ScheduleOn;
+        //private bool m_ScheduleOn;
         private readonly HashSet<IActorRef> subscribers;
 
         public static Props GetProps()
@@ -89,7 +89,7 @@ namespace AkkaStats.Actors
                 m_CancelToken = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable( TimeSpan.FromSeconds( 1 ),
                 TimeSpan.FromSeconds( 3 ),
                 Self, new GetValues(), Self );
-                m_ScheduleOn = true;
+                // m_ScheduleOn = true;
             }
         }
         /// <summary>
